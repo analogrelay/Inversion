@@ -50,9 +50,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CommonResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Data\ConstrainedStream.cs" />
     <Compile Include="Data\GitObjectCodec.cs" />
     <Compile Include="Data\IObjectContent.cs" />
     <Compile Include="Data\IObjectCodec.cs" />
+    <Compile Include="Data\StreamObjectContent.cs" />
     <Compile Include="DisposeProtectedStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DatabaseObject.cs" />
