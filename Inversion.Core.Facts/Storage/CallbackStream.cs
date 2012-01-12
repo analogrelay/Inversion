@@ -6,11 +6,11 @@ using System.IO;
 
 namespace Inversion.Core.Facts.Storage
 {
-    public class CallbackMemoryStream : Stream
+    public class CallbackStream<T> : Stream where T : Stream
     {
         private bool _writeable;
-        private MemoryStream _strm;
-        private Action<byte[]> _callback;
+        private T _strm;
+        private Action<T> _callback;
 
         public override bool CanRead
         {
@@ -38,7 +38,7 @@ namespace Inversion.Core.Facts.Storage
             set { _strm.Position = value; }
         }
 
-        public CallbackMemoryStream(MemoryStream strm, Action<byte[]> callback, bool writeable)
+        public CallbackStream(T strm, Action<T> callback, bool writeable)
         {
             _strm = strm;
             _writeable = writeable;
@@ -77,7 +77,7 @@ namespace Inversion.Core.Facts.Storage
             base.Dispose(disposing);
             if(disposing) {
                 _strm.Dispose();
-                _callback(_strm.ToArray());
+                _callback(_strm);
             }
         }
     }

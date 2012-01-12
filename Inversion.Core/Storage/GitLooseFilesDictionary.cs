@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Globalization;
 
 namespace Inversion.Storage
 {
@@ -22,32 +23,43 @@ namespace Inversion.Storage
 
         public bool Exists(string hash)
         {
+            if (String.IsNullOrEmpty(hash)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "hash"), "hash"); }
             return Root.Exists(HashToPath(hash));
         }
 
         public Stream OpenRead(string hash)
         {
+            if (String.IsNullOrEmpty(hash)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "hash"), "hash"); }
             if (!Exists(hash))
             {
                 throw new KeyNotFoundException(String.Format("Hash '{0}' does not exist in the database.", hash));
             }
-            return Root.Open(HashToPath(hash), FileAccess.Read, create: false);
+            return Compression.WrapStreamForDecompression(
+                Root.Open(
+                    HashToPath(hash), 
+                    FileAccess.Read, 
+                    create: false));
         }
 
         public Stream OpenWrite(string hash, bool create)
         {
+            if (String.IsNullOrEmpty(hash)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "hash"), "hash"); }
             if (!Exists(hash) && !create)
             {
                 throw new KeyNotFoundException(String.Format("Hash '{0}' does not exist in the database.", hash));
             }
-            return Root.Open(HashToPath(hash), FileAccess.ReadWrite, create);
+            return Compression.WrapStreamForCompression(
+                Root.Open(
+                    HashToPath(hash),
+                    FileAccess.ReadWrite,
+                    create));
         }
 
         private string HashToPath(string hash)
         {
             if (hash.Length < 3)
             {
-                return hash;
+                return String.Format(@"_\{0}", hash);
             }
             else
             {

@@ -38,7 +38,7 @@ namespace Inversion.Core.Facts.Storage
                 throw new FileNotFoundException(String.Format("File not found: {0}", relativePath));
             }
             // Technically if someone specifies FileAccess.Write, they will get Read permission too, but we don't care for this test class.
-            return new CallbackMemoryStream(strm, callback: UpdateFile(relativePath), writeable: access != FileAccess.Read);
+            return new CallbackStream<MemoryStream>(strm, callback: UpdateFile(relativePath), writeable: access != FileAccess.Read);
         }
 
         public bool Exists(string relativePath)
@@ -46,11 +46,11 @@ namespace Inversion.Core.Facts.Storage
             return _files.ContainsKey(relativePath);
         }
 
-        private Action<byte[]> UpdateFile(string relativePath)
+        private Action<MemoryStream> UpdateFile(string relativePath)
         {
             return data =>
             {
-                _files[relativePath] = data;
+                _files[relativePath] = data.ToArray();
             };
         }
     }
