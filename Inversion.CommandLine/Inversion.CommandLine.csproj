@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Common\CommonResources.Designer.cs">
+      <Link>CommonResources.Designer.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CommonResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="CommandLineException.cs" />
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="CommandManager.cs" />
@@ -75,17 +81,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Common\CommonResources.Designer.cs">
-      <Link>CommonResources.Designer.cs</Link>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CommonResources.resx</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="..\Common\CommonResources.resx">
       <Link>CommonResources.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CommonResources.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Inversion.Utils</CustomToolNamespace>
+      <LogicalName>Inversion.CommonResources.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="InversionResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

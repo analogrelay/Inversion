@@ -10,6 +10,8 @@ namespace Inversion.Storage
 {
     public class GitLooseFilesDictionary : IPersistentDictionary
     {
+        private const string ObjectsDirectory = "objects";
+
         public IFileSystem Root { get; set; }
         public ICompressionStrategy Compression { get; set; }
 
@@ -60,11 +62,11 @@ namespace Inversion.Storage
         {
             if (hash.Length < 3)
             {
-                return String.Format(@"_\{0}", hash);
+                return String.Format(@"{0}\_\{1}", ObjectsDirectory, hash);
             }
             else
             {
-                return String.Format(@"{0}\{1}", hash.Substring(0, 2), hash.Substring(2));
+                return String.Format(@"{0}\{1}\{2}", ObjectsDirectory, hash.Substring(0, 2), hash.Substring(2));
             }
         }
     }

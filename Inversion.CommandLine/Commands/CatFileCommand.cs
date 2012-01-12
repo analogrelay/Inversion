@@ -24,18 +24,13 @@ namespace Inversion.CommandLine.Commands
         public override void ExecuteCommand()
         {
             // Find the object database
-            string dbRoot = Path.Combine(Environment.CurrentDirectory, @".git\objects");
-            if(!Directory.Exists(dbRoot))
+            string dbRoot = Git.FindGitDatabase(Environment.CurrentDirectory);
+            if (String.IsNullOrEmpty(dbRoot))
             {
-                Console.WriteError("Not a git working directory root: {0}", Environment.CurrentDirectory);
+                Console.WriteError("Not in a git repository!");
                 return;
             }
-
-            Database db = new Database(
-                new GitLooseFilesDictionary(
-                    new PhysicalFileSystem(dbRoot),
-                    new ZlibCompressionStrategy()),
-                new GitObjectCodec());
+            Database db = Git.OpenGitDatabase(dbRoot);
 
             DatabaseObject obj = db.GetObject(Arguments[0]);
             if (obj == null)
