@@ -45,11 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CommonResources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Data\ConstrainedStream.cs" />
     <Compile Include="Data\GitObjectCodec.cs" />
     <Compile Include="Data\IObjectContent.cs" />
@@ -67,13 +62,19 @@
     <Compile Include="Storage\ZlibCompressionStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="CommonResources.resx">
+    <Compile Include="..\Common\CommonResources.Designer.cs">
+      <Link>CommonResources.Designer.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CommonResources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="..\Common\CommonResources.resx">
+      <Link>CommonResources.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CommonResources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Inversion.Utils</CustomToolNamespace>
     </EmbeddedResource>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

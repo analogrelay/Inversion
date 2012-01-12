@@ -5,6 +5,7 @@ using System.Text;
 using Inversion.Storage;
 using System.IO;
 using System.Globalization;
+using Inversion.Utils;
 
 namespace Inversion.Data
 {
@@ -14,7 +15,7 @@ namespace Inversion.Data
         internal IObjectCodec Codec { get; private set; }
 
         // Inheritors can avoid setting Storage and Codec, at their own risk...
-        [Obsolete("Be extremely careful when using this constructor as the Storage and Codec properties will be null.")]
+        [Obsolete("Be careful when using this constructor as the Storage and Codec properties will be null.")]
         protected Database() { }
         public Database(IPersistentDictionary storage, IObjectCodec codec) {
             if (storage == null) { throw new ArgumentNullException("storage"); }
