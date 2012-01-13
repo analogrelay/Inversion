@@ -62,9 +62,11 @@
     <Compile Include="Data\DatabaseObject.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Storage\GitLooseFilesDictionary.cs" />
+    <Compile Include="Storage\GitReferenceDirectory.cs" />
     <Compile Include="Storage\ICompressionStrategy.cs" />
     <Compile Include="Storage\IFileSystem.cs" />
     <Compile Include="Storage\IPersistentDictionary.cs" />
+    <Compile Include="Storage\IReferenceDirectory.cs" />
     <Compile Include="Storage\PhysicalFileSystem.cs" />
     <Compile Include="Storage\ZlibCompressionStrategy.cs" />
   </ItemGroup>

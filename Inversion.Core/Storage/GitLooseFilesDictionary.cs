@@ -10,8 +10,6 @@ namespace Inversion.Storage
 {
     public class GitLooseFilesDictionary : IPersistentDictionary
     {
-        private const string ObjectsDirectory = "objects";
-
         public IFileSystem Root { get; set; }
         public ICompressionStrategy Compression { get; set; }
 
@@ -27,7 +25,7 @@ namespace Inversion.Storage
         public bool Exists(string hash)
         {
             if (String.IsNullOrEmpty(hash)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "hash"), "hash"); }
-            return Root.Exists(HashToPath(hash));
+            return Root.Exists(FindHash(hash));
         }
 
         public Stream OpenRead(string hash)
@@ -39,7 +37,7 @@ namespace Inversion.Storage
             }
             return Compression.WrapStreamForDecompression(
                 Root.Open(
-                    HashToPath(hash), 
+                    FindHash(hash), 
                     FileAccess.Read, 
                     create: false));
         }
@@ -51,23 +49,43 @@ namespace Inversion.Storage
             {
                 throw new KeyNotFoundException(String.Format("Hash '{0}' does not exist in the database.", hash));
             }
+
             return Compression.WrapStreamForCompression(
                 Root.Open(
-                    HashToPath(hash),
+                    FindHash(hash),
                     FileAccess.ReadWrite,
                     create));
         }
 
-        private string HashToPath(string hash)
+        private string FindHash(string partialHash)
         {
-            if (hash.Length < 3)
+            string searchPath;
+            if (partialHash.Length == 2)
             {
-                return String.Format(@"{0}\_\{1}", ObjectsDirectory, hash);
+                searchPath = String.Format(@"{0}\*", partialHash);
+            }
+            else if (partialHash.Length >= 3)
+            {
+                searchPath = String.Format(@"{0}\{1}*", partialHash.Substring(0, 2), partialHash.Substring(2));
             }
             else
             {
-                return String.Format(@"{0}\{1}\{2}", ObjectsDirectory, hash.Substring(0, 2), hash.Substring(2));
+                return partialHash;
             }
+            string[] results = Root.ResolveWildcard(searchPath);
+            if (results.Length > 1)
+            {
+                throw new KeyNotFoundException(String.Format("Prefix '{0}' matches multiple objects in the database.", partialHash));
+            }
+            if (results.Length == 0)
+            {
+                if (partialHash.Length < 3)
+                {
+                    throw new ArgumentException(String.Format("Hash '{0}' does not exist and is not long enough to create a new entry in the database", partialHash), "partialHash");
+                }
+                return searchPath.TrimEnd('*');
+            }
+            return results[0];
         }
     }
 }

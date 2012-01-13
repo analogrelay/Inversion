@@ -40,7 +40,7 @@ namespace Inversion.Core.Facts.Storage
             // Arrange
             InMemoryFileSystem fs = new InMemoryFileSystem();
             GitLooseFilesDictionary db = new GitLooseFilesDictionary(fs, new NullCompressionStrategy());
-            fs.WriteTestFile(@"objects\ab\cdefghijk", "Foo");
+            fs.WriteTestFile(@"ab\cdefghijk", "Foo");
 
             // Act/Assert
             Assert.True(db.Exists("abcdefghijk"));
@@ -54,7 +54,7 @@ namespace Inversion.Core.Facts.Storage
             GitLooseFilesDictionary db = new GitLooseFilesDictionary(fs, new NullCompressionStrategy());
 
             // Assume
-            Assert.False(fs.Exists(@"objects\ab\cdefghijk"));
+            Assert.False(fs.Exists(@"ab\cdefghijk"));
 
             // Act/Assert
             Assert.False(db.Exists("abcdefghijk"));
@@ -84,7 +84,7 @@ namespace Inversion.Core.Facts.Storage
             // Arrange
             InMemoryFileSystem fs = new InMemoryFileSystem();
             GitLooseFilesDictionary db = new GitLooseFilesDictionary(fs, new NullCompressionStrategy());
-            fs.WriteTestFile(@"objects\ab\cdefghijk", "Foo");
+            fs.WriteTestFile(@"ab\cdefghijk", "Foo");
 
             // Act
             using (StreamReader reader = new StreamReader(db.OpenRead("abcdefghijk")))
@@ -100,7 +100,7 @@ namespace Inversion.Core.Facts.Storage
             // Arrange
             InMemoryFileSystem fs = new InMemoryFileSystem();
             GitLooseFilesDictionary db = new GitLooseFilesDictionary(fs, new NullCompressionStrategy());
-            fs.WriteTestFile(@"objects\ab\cdefghijk", "Foo");
+            fs.WriteTestFile(@"ab\cdefghijk", "Foo");
 
             // Act/Assert
             Assert.Equal("Stream was not writable.",
@@ -113,7 +113,7 @@ namespace Inversion.Core.Facts.Storage
             // Arrange
             InMemoryFileSystem fs = new InMemoryFileSystem();
             GitLooseFilesDictionary db = new GitLooseFilesDictionary(fs, new NullCompressionStrategy());
-            fs.WriteTestFile(@"objects\ab\cdefghijk", "Foo");
+            fs.WriteTestFile(@"ab\cdefghijk", "Foo");
 
             // Act
             using (Stream strm = db.OpenWrite("abcdefghijk", create: false))
@@ -124,7 +124,7 @@ namespace Inversion.Core.Facts.Storage
             }
 
             // Assert
-            Assert.Equal("FoBar", fs.ReadTestFile(@"objects\ab\cdefghijk"));
+            Assert.Equal("FoBar", fs.ReadTestFile(@"ab\cdefghijk"));
         }
 
         [Fact]
@@ -157,7 +157,7 @@ namespace Inversion.Core.Facts.Storage
             GitLooseFilesDictionary db = new GitLooseFilesDictionary(fs, new NullCompressionStrategy());
 
             // Assume
-            Assert.False(fs.Exists(@"objects\ab\cdefghijk"));
+            Assert.False(fs.Exists(@"ab\cdefghijk"));
 
             // Act
             using (Stream strm = db.OpenWrite("abcdefghijk", create: true))
@@ -167,23 +167,21 @@ namespace Inversion.Core.Facts.Storage
             }
 
             // Assert
-            Assert.Equal("FooBarBaz", fs.ReadTestFile(@"objects\ab\cdefghijk"));
+            Assert.Equal("FooBarBaz", fs.ReadTestFile(@"ab\cdefghijk"));
         }
 
         [Fact]
-        public void HashesLessThan3CharactersAreStoredInUnderscoreFolder()
+        public void HashesLessThan3CharactersThrowWhenNeededToCreateObjects()
         {
             // Arrange
             InMemoryFileSystem fs = new InMemoryFileSystem();
             GitLooseFilesDictionary db = new GitLooseFilesDictionary(fs, new NullCompressionStrategy());
-            fs.WriteTestFile(@"objects\_\xy", "Foo");
+            fs.WriteTestFile(@"xy", "Foo");
 
             // Act
-            using (StreamReader reader = new StreamReader(db.OpenRead("xy")))
-            {
-                // Assert
-                Assert.Equal("Foo", reader.ReadToEnd());
-            }
+            Assert.Equal(
+                "Hash 'xy' does not exist and is not long enough to create a new entry in the database\r\nParameter name: partialHash",
+                Assert.Throws<ArgumentException>(() => db.OpenWrite("xy", create: true)).Message);
         }
 
         [Fact]
@@ -196,7 +194,7 @@ namespace Inversion.Core.Facts.Storage
                         .Returns(expected);
             InMemoryFileSystem fs = new InMemoryFileSystem();
             GitLooseFilesDictionary db = new GitLooseFilesDictionary(fs, mockStrategy.Object);
-            fs.WriteTestFile(@"objects\te\st", "Foo");
+            fs.WriteTestFile(@"te\st", "Foo");
 
             // Act
             using (Stream actual = db.OpenRead("test"))
@@ -220,6 +218,22 @@ namespace Inversion.Core.Facts.Storage
             using (Stream actual = db.OpenWrite("test", create: true))
             {
                 Assert.Same(expected, actual);
+            }
+        }
+
+        [Fact]
+        public void OpenReadSupportsPartialKeyIfSingleMatchFound()
+        {
+            // Arrange
+            InMemoryFileSystem fs = new InMemoryFileSystem();
+            GitLooseFilesDictionary db = new GitLooseFilesDictionary(fs, new NullCompressionStrategy());
+            fs.WriteTestFile(@"ab\cdefghijk", "Foo");
+
+            // Act
+            using (StreamReader reader = new StreamReader(db.OpenRead("abc")))
+            {
+                // Assert
+                Assert.Equal("Foo", reader.ReadToEnd());
             }
         }
     }

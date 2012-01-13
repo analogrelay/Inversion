@@ -11,5 +11,6 @@ namespace Inversion.Storage
         string Root { get; }
         Stream Open(string relativePath, FileAccess access, bool create);
         bool Exists(string relativePath);
+        string[] ResolveWildcard(string relativeWildCardPath);
     }
 }

@@ -11,15 +11,18 @@ namespace Inversion.Data
 {
     public class Database
     {
+        internal IReferenceDirectory Directory { get; private set; }
         internal IPersistentDictionary Storage { get; private set; }
         internal IObjectCodec Codec { get; private set; }
 
         // Inheritors can avoid setting Storage and Codec, at their own risk...
         [Obsolete("Be careful when using this constructor as the Storage and Codec properties will be null.")]
         protected Database() { }
-        public Database(IPersistentDictionary storage, IObjectCodec codec) {
+        public Database(IReferenceDirectory directory, IPersistentDictionary storage, IObjectCodec codec) {
+            if (directory == null) { throw new ArgumentNullException("directory"); }
             if (storage == null) { throw new ArgumentNullException("storage"); }
             if (codec == null) { throw new ArgumentNullException("codec"); }
+            Directory = directory;
             Storage = storage;
             Codec = codec;
         }
@@ -33,6 +36,12 @@ namespace Inversion.Data
                 return Codec.Decode(Storage.OpenRead(hash));
             }
             return null;
+        }
+
+        public virtual string ResolveReference(string referenceName)
+        {
+            if (String.IsNullOrEmpty(referenceName)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "referenceName"), "referenceName"); }
+            return Directory.ResolveReference(referenceName);
         }
 
         public virtual void StoreObject(string hash, DatabaseObject obj)

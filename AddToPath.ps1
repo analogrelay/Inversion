@@ -1,0 +1,1 @@
+$env:PATH = "$($env:PATH);$(Split-Path -Parent $MyInvocation.MyCommand.Definition)\Inversion.CommandLine\bin\Debug"

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Inversion.Storage;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Inversion.Core.Facts.Storage
 {
@@ -52,6 +53,12 @@ namespace Inversion.Core.Facts.Storage
             {
                 _files[relativePath] = data.ToArray();
             };
+        }
+
+        public string[] ResolveWildcard(string relativeWildCardPath)
+        {
+            Regex r = new Regex(Regex.Escape(relativeWildCardPath).Replace(@"\*", ".*"));
+            return _files.Where(p => r.IsMatch(p.Key)).Select(p => p.Key).ToArray();
         }
     }
 }

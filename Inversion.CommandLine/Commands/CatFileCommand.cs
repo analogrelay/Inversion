@@ -32,7 +32,7 @@ namespace Inversion.CommandLine.Commands
             }
             Database db = Git.OpenGitDatabase(dbRoot);
 
-            DatabaseObject obj = db.GetObject(Arguments[0]);
+            DatabaseObject obj = db.GetObject(db.ResolveReference(Arguments[0]));
             if (obj == null)
             {
                 Console.WriteError("No such object: {0}", Arguments[0]);

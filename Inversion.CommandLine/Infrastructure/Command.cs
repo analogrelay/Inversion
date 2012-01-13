@@ -5,6 +5,8 @@ using System.Text;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using Inversion.CommandLine.Commands;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Inversion.CommandLine.Infrastructure
 {
@@ -32,6 +34,11 @@ namespace Inversion.CommandLine.Infrastructure
         [Option("help", AltName = "?")]
         public bool Help { get; set; }
 
+#if DEBUG
+        [Option("debug", AltName = "d")]
+        public bool Debug { get; set; }
+#endif
+
         public CommandAttribute CommandAttribute
         {
             get
@@ -46,6 +53,7 @@ namespace Inversion.CommandLine.Infrastructure
 
         public void Execute()
         {
+            WaitForDebugger();
             if (Help)
             {
                 HelpCommand.ViewHelpForCommand(CommandAttribute.CommandName);
@@ -79,6 +87,19 @@ namespace Inversion.CommandLine.Infrastructure
                 return new CommandAttribute(name, InversionResources.DefaultCommandDescription);
             }
             return null;
+        }
+
+        [Conditional("DEBUG")]
+        protected void WaitForDebugger()
+        {
+#if DEBUG
+            if (Debug)
+            {
+                Console.WriteLine("Waiting for Debugger...");
+                while (!Debugger.IsAttached) { Thread.Yield(); }
+                Console.WriteLine("Debugger attached");
+            }
+#endif
         }
     }
 }

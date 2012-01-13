@@ -30,6 +30,11 @@ namespace Inversion.Storage
         public string GetFullPath(string relativePath)
         {
             if (String.IsNullOrEmpty(relativePath)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "relativePath"), "relativePath"); }
+            
+            if (Path.IsPathRooted(relativePath))
+            {
+                return relativePath;
+            }
             return Path.Combine(Root, relativePath);
         }
 
@@ -37,6 +42,11 @@ namespace Inversion.Storage
         {
             if (String.IsNullOrEmpty(relativePath)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "relativePath"), "relativePath"); }
             return File.Exists(GetFullPath(relativePath));
+        }
+
+        public string[] ResolveWildcard(string relativeWildCardPath)
+        {
+            return Directory.GetFiles(Root, relativeWildCardPath, SearchOption.AllDirectories);
         }
     }
 }

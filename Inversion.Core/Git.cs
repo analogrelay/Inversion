@@ -32,8 +32,9 @@ namespace Inversion
         public static Database OpenGitDatabase(string gitDir)
         {
             return new Database(
+                new GitReferenceDirectory(new PhysicalFileSystem(gitDir)),
                 new GitLooseFilesDictionary(
-                    new PhysicalFileSystem(gitDir),
+                    new PhysicalFileSystem(Path.Combine(gitDir, "objects")),
                     new ZlibCompressionStrategy()
                 ),
                 new GitObjectCodec());

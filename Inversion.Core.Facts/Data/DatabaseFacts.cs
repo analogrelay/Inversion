@@ -13,17 +13,24 @@ namespace Inversion.Core.Facts.Data
     public class DatabaseFacts
     {
         [Fact]
+        public void ConstructorRequiresNonNullReferenceDirectory()
+        {
+            Assert.Equal("directory",
+                Assert.Throws<ArgumentNullException>(() => new Database(null, new Mock<IPersistentDictionary>().Object, new GitObjectCodec())).ParamName);
+        }
+
+        [Fact]
         public void ConstructorRequiresNonNullDictionaryStorage()
         {
             Assert.Equal("storage",
-                Assert.Throws<ArgumentNullException>(() => new Database(null, new GitObjectCodec())).ParamName);
+                Assert.Throws<ArgumentNullException>(() => new Database(new Mock<IReferenceDirectory>().Object, null, new GitObjectCodec())).ParamName);
         }
 
         [Fact]
         public void ConstructorRequiresNonNullObjectDecoder()
         {
             Assert.Equal("codec",
-                Assert.Throws<ArgumentNullException>(() => new Database(new Mock<IPersistentDictionary>().Object, null)).ParamName);
+                Assert.Throws<ArgumentNullException>(() => new Database(new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, null)).ParamName);
         }
 
         [Fact]
@@ -31,11 +38,11 @@ namespace Inversion.Core.Facts.Data
         {
             Assert.Equal("hash",
                 Assert.Throws<ArgumentException>(
-                    () => new Database(new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
+                    () => new Database(new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
                         .GetObject(null)).ParamName);
             Assert.Equal("hash",
                 Assert.Throws<ArgumentException>(
-                    () => new Database(new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
+                    () => new Database(new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
                         .GetObject(String.Empty)).ParamName);
         }
 
@@ -44,12 +51,25 @@ namespace Inversion.Core.Facts.Data
         {
             Assert.Equal("hash",
                 Assert.Throws<ArgumentException>(
-                    () => new Database(new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
+                    () => new Database(new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
                         .StoreObject(null, new NullDatabaseObject())).ParamName);
             Assert.Equal("hash",
                 Assert.Throws<ArgumentException>(
-                    () => new Database(new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
+                    () => new Database(new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
                         .StoreObject(String.Empty, new NullDatabaseObject())).ParamName);
+        }
+
+        [Fact]
+        public void ResolveReferenceRequiresNonNullOrEmptyReferenceName()
+        {
+            Assert.Equal("referenceName",
+                Assert.Throws<ArgumentException>(
+                    () => new Database(new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
+                        .ResolveReference(null)).ParamName);
+            Assert.Equal("referenceName",
+                Assert.Throws<ArgumentException>(
+                    () => new Database(new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
+                        .ResolveReference(String.Empty)).ParamName);
         }
 
         [Fact]
@@ -57,7 +77,7 @@ namespace Inversion.Core.Facts.Data
         {
             Assert.Equal("obj",
                 Assert.Throws<ArgumentNullException>(
-                    () => new Database(new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
+                    () => new Database(new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec())
                         .StoreObject("abc", null)).ParamName);
         }
 
@@ -66,7 +86,7 @@ namespace Inversion.Core.Facts.Data
         {
             // Arrange
             Mock<IPersistentDictionary> mockStorage = new Mock<IPersistentDictionary>();
-            Database db = new Database(mockStorage.Object, new GitObjectCodec());
+            Database db = new Database(new Mock<IReferenceDirectory>().Object, mockStorage.Object, new GitObjectCodec());
             mockStorage.Setup(s => s.Exists("abcdefghij")).Returns(false);
 
             // Act/Assert
@@ -79,7 +99,7 @@ namespace Inversion.Core.Facts.Data
             // Arrange
             Mock<IPersistentDictionary> mockStorage = new Mock<IPersistentDictionary>(MockBehavior.Strict);
             Mock<IObjectCodec> mockCodec = new Mock<IObjectCodec>(MockBehavior.Strict);
-            Database db = new Database(mockStorage.Object, mockCodec.Object);
+            Database db = new Database(new Mock<IReferenceDirectory>().Object, mockStorage.Object, mockCodec.Object);
             Stream expectedStrm = new MemoryStream();
             DatabaseObject expectedObj = new NullDatabaseObject();
             mockStorage.Setup(s => s.Exists("abcdefghij")).Returns(true);
@@ -96,7 +116,7 @@ namespace Inversion.Core.Facts.Data
             // Arrange
             Mock<IPersistentDictionary> mockStorage = new Mock<IPersistentDictionary>(MockBehavior.Strict);
             Mock<IObjectCodec> mockCodec = new Mock<IObjectCodec>(MockBehavior.Loose);
-            Database db = new Database(mockStorage.Object, mockCodec.Object);
+            Database db = new Database(new Mock<IReferenceDirectory>().Object, mockStorage.Object, mockCodec.Object);
             Stream expectedStrm = new MemoryStream();
             DatabaseObject expectedObj = new NullDatabaseObject();
             mockStorage.Setup(s => s.OpenWrite("abcdefghij", /* create */ true)).Returns(expectedStrm);
@@ -106,6 +126,18 @@ namespace Inversion.Core.Facts.Data
 
             // Assert
             mockCodec.Verify(d => d.Encode(expectedObj, expectedStrm));
+        }
+
+        [Fact]
+        public void ResolveReferencePassesThroughReferenceDirectory()
+        {
+            // Arrange
+            Mock<IReferenceDirectory> mockDirectory = new Mock<IReferenceDirectory>();
+            Database db = new Database(mockDirectory.Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec());
+            mockDirectory.Setup(r => r.ResolveReference("foo")).Returns("bar");
+
+            // Act/Assert
+            Assert.Equal("bar", db.ResolveReference("foo"));
         }
     }
 }
