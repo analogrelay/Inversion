@@ -52,9 +52,11 @@
       <DependentUpon>CommonResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Data\ConstrainedStream.cs" />
+    <Compile Include="Data\DatabaseObjectBuilder.cs" />
     <Compile Include="Data\GitObjectCodec.cs" />
     <Compile Include="Data\IObjectContent.cs" />
     <Compile Include="Data\IObjectCodec.cs" />
+    <Compile Include="Data\HashGenerator.cs" />
     <Compile Include="Data\StreamObjectContent.cs" />
     <Compile Include="DisposeProtectedStream.cs" />
     <Compile Include="Git.cs" />

@@ -14,15 +14,15 @@ namespace Inversion.Core.Facts.Storage
         [Fact]
         public void WrapForDecompressionRequiresNonNullStream()
         {
-            Assert.Equal("target",
-                Assert.Throws<ArgumentNullException>(() => new ZlibCompressionStrategy().WrapStreamForDecompression(null)).ParamName);
+            Assert.Throws<ArgumentNullException>(() => new ZlibCompressionStrategy().WrapStreamForDecompression(null))
+                  .WithParamName("target");
         }
 
         [Fact]
         public void WrapForCompressionRequiresNonNullStream()
         {
-            Assert.Equal("target",
-                Assert.Throws<ArgumentNullException>(() => new ZlibCompressionStrategy().WrapStreamForCompression(null)).ParamName);
+            Assert.Throws<ArgumentNullException>(() => new ZlibCompressionStrategy().WrapStreamForCompression(null))
+                  .WithParamName("target");
         }
 
         [Fact]

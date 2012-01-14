@@ -39,7 +39,7 @@ namespace Inversion.Data
             if (target == null) { throw new ArgumentNullException("target"); }
             
             // Write header
-            using (BinaryWriter writer = new BinaryWriter(new DisposeProtectedStream(target)))
+            using (BinaryWriter writer = new BinaryWriter(new DisposeProtectedStream(target), Encoding.ASCII))
             {
                 writer.Write(obj.Type.ToCharArray());
                 writer.Write(' ');

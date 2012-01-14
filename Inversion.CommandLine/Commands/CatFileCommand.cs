@@ -10,7 +10,7 @@ using System.IO;
 namespace Inversion.CommandLine.Commands
 {
     [Command("cat-file", "Displays the specified database file content", UsageSummary = "<object> [options]", MinArgs = 1)]
-    public class CatFileCommand : Command
+    public class CatFileCommand : GitCommand
     {
         [Option("Shows the type of the object", AltName = "t")]
         public bool Type { get; set; }
@@ -24,15 +24,7 @@ namespace Inversion.CommandLine.Commands
         public override void ExecuteCommand()
         {
             // Find the object database
-            string dbRoot = Git.FindGitDatabase(Environment.CurrentDirectory);
-            if (String.IsNullOrEmpty(dbRoot))
-            {
-                Console.WriteError("Not in a git repository!");
-                return;
-            }
-            Database db = Git.OpenGitDatabase(dbRoot);
-
-            DatabaseObject obj = db.GetObject(db.ResolveReference(Arguments[0]));
+            DatabaseObject obj = Database.GetObject(Database.ResolveReference(Arguments[0]));
             if (obj == null)
             {
                 Console.WriteError("No such object: {0}", Arguments[0]);

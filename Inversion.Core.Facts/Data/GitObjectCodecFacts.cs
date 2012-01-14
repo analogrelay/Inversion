@@ -13,22 +13,22 @@ namespace Inversion.Core.Facts.Data
         [Fact]
         public void DecodeRequiresNonNullSource()
         {
-            Assert.Equal("source",
-                Assert.Throws<ArgumentNullException>(() => new GitObjectCodec().Decode(null)).ParamName);
+            Assert.Throws<ArgumentNullException>(() => new GitObjectCodec().Decode(null))
+                  .WithParamName("source");
         }
 
         [Fact]
         public void EncodeRequiresNonNullObject()
         {
-            Assert.Equal("obj",
-                Assert.Throws<ArgumentNullException>(() => new GitObjectCodec().Encode(null, Stream.Null)).ParamName);
+            Assert.Throws<ArgumentNullException>(() => new GitObjectCodec().Encode(null, Stream.Null))
+                  .WithParamName("obj");
         }
 
         [Fact]
         public void EncodeRequiresNonNullTarget()
         {
-            Assert.Equal("target",
-                Assert.Throws<ArgumentNullException>(() => new GitObjectCodec().Encode(new NullDatabaseObject(), null)).ParamName);
+            Assert.Throws<ArgumentNullException>(() => new GitObjectCodec().Encode(new NullDatabaseObject(), null))
+                  .WithParamName("target");
         }
     }
 }

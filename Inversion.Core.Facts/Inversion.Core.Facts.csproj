@@ -55,6 +55,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\HashGeneratorFacts.cs" />
+    <Compile Include="ExceptionAssertMixin.cs" />
     <Compile Include="Data\DatabaseFacts.cs" />
     <Compile Include="Data\GitObjectCodecFacts.cs" />
     <Compile Include="Data\NullDatabaseObject.cs" />

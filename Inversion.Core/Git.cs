@@ -5,6 +5,7 @@ using System.Text;
 using Inversion.Data;
 using Inversion.Storage;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace Inversion
 {
@@ -32,6 +33,7 @@ namespace Inversion
         public static Database OpenGitDatabase(string gitDir)
         {
             return new Database(
+                new HashGenerator(new SHA1Managed()),
                 new GitReferenceDirectory(new PhysicalFileSystem(gitDir)),
                 new GitLooseFilesDictionary(
                     new PhysicalFileSystem(Path.Combine(gitDir, "objects")),

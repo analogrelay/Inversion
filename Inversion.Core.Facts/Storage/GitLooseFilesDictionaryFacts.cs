@@ -14,24 +14,25 @@ namespace Inversion.Core.Facts.Storage
         [Fact]
         public void ConstructorThrowsOnNullFileSystem()
         {
-            Assert.Equal("root",
-                Assert.Throws<ArgumentNullException>(() => new GitLooseFilesDictionary(null, new NullCompressionStrategy())).ParamName);
+            Assert.Throws<ArgumentNullException>(() => new GitLooseFilesDictionary(null, new NullCompressionStrategy()))
+                  .WithParamName("root");
         }
 
         [Fact]
         public void ConstructorThrowsOnNullCompression()
         {
-            Assert.Equal("compression",
-                Assert.Throws<ArgumentNullException>(() => new GitLooseFilesDictionary(new InMemoryFileSystem(), null)).ParamName);
+            Assert.Throws<ArgumentNullException>(() => new GitLooseFilesDictionary(new InMemoryFileSystem(), null))
+                  .WithParamName("compression");
         }
 
         [Fact]
         public void ExistsThrowsOnNullOrEmptyHash()
         {
-            Assert.Equal("hash",
-                Assert.Throws<ArgumentException>(() => new GitLooseFilesDictionary(new InMemoryFileSystem(), new NullCompressionStrategy()).Exists(null)).ParamName);
-            Assert.Equal("hash",
-                Assert.Throws<ArgumentException>(() => new GitLooseFilesDictionary(new InMemoryFileSystem(), new NullCompressionStrategy()).Exists(String.Empty)).ParamName);
+            GitLooseFilesDictionary dict = new GitLooseFilesDictionary(new InMemoryFileSystem(), new NullCompressionStrategy());
+            Assert.Throws<ArgumentException>(() => dict.Exists(null))
+                  .WithParamName("hash");
+            Assert.Throws<ArgumentException>(() => dict.Exists(String.Empty))
+                  .WithParamName("hash");
         }
 
         [Fact]
@@ -63,19 +64,21 @@ namespace Inversion.Core.Facts.Storage
         [Fact]
         public void OpenReadThrowsOnNullOrEmptyHash()
         {
-            Assert.Equal("hash",
-                Assert.Throws<ArgumentException>(() => new GitLooseFilesDictionary(new InMemoryFileSystem(), new NullCompressionStrategy()).OpenRead(null)).ParamName);
-            Assert.Equal("hash",
-                Assert.Throws<ArgumentException>(() => new GitLooseFilesDictionary(new InMemoryFileSystem(), new NullCompressionStrategy()).OpenRead(String.Empty)).ParamName);
+            GitLooseFilesDictionary dict = new GitLooseFilesDictionary(new InMemoryFileSystem(), new NullCompressionStrategy());
+            Assert.Throws<ArgumentException>(() => dict.OpenRead(null))
+                  .WithParamName("hash");
+            Assert.Throws<ArgumentException>(() => dict.OpenRead(String.Empty))
+                  .WithParamName("hash");
         }
 
         [Fact]
         public void OpenWriteThrowsOnNullOrEmptyHash()
         {
-            Assert.Equal("hash",
-                Assert.Throws<ArgumentException>(() => new GitLooseFilesDictionary(new InMemoryFileSystem(), new NullCompressionStrategy()).OpenWrite(null, create: false)).ParamName);
-            Assert.Equal("hash",
-                Assert.Throws<ArgumentException>(() => new GitLooseFilesDictionary(new InMemoryFileSystem(), new NullCompressionStrategy()).OpenWrite(String.Empty, create: false)).ParamName);
+            GitLooseFilesDictionary dict = new GitLooseFilesDictionary(new InMemoryFileSystem(), new NullCompressionStrategy());
+            Assert.Throws<ArgumentException>(() => dict.OpenWrite(null, create: false))
+                  .WithParamName("hash");
+            Assert.Throws<ArgumentException>(() => dict.OpenWrite(String.Empty, create: false))
+                  .WithParamName("hash");
         }
 
         [Fact]

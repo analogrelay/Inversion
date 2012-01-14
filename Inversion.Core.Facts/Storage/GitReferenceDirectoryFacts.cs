@@ -13,20 +13,18 @@ namespace Inversion.Core.Facts.Storage
         [Fact]
         public void ConstructorRequiresNonNullFileSystem()
         {
-            Assert.Equal(
-                "root",
-                Assert.Throws<ArgumentNullException>(() => new GitReferenceDirectory(null)).ParamName);
+            Assert.Throws<ArgumentNullException>(() => new GitReferenceDirectory(null))
+                  .WithParamName("root");
         }
 
         [Fact]
         public void ResolveReferenceRequiresNonNullOrEmptyName()
         {
-            Assert.Equal(
-                "referenceName",
-                Assert.Throws<ArgumentException>(() => new GitReferenceDirectory(new InMemoryFileSystem()).ResolveReference(null)).ParamName);
-            Assert.Equal(
-                "referenceName",
-                Assert.Throws<ArgumentException>(() => new GitReferenceDirectory(new InMemoryFileSystem()).ResolveReference(String.Empty)).ParamName);
+            GitReferenceDirectory dir = new GitReferenceDirectory(new InMemoryFileSystem());
+            Assert.Throws<ArgumentException>(() => dir.ResolveReference(null))
+                  .WithParamName("referenceName");
+            Assert.Throws<ArgumentException>(() => dir.ResolveReference(String.Empty))
+                  .WithParamName("referenceName");
         }
 
         [Theory]
