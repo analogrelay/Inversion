@@ -24,13 +24,13 @@ namespace Inversion.Data
                 lenStr = ReadToken(reader);
             }
 
-            int len = -1;
-            if(!Int32.TryParse(lenStr, out len)) {
+            long len = -1;
+            if(!Int64.TryParse(lenStr, out len)) {
                 throw new InvalidDataException(String.Format("Invalid object, length token value is not an integer: {0}", lenStr));
             }
 
             // Should now be at the object body, read that in (for now)
-            return new DatabaseObject(type, len, new StreamObjectContent(new ConstrainedStream(source)));
+            return new DatabaseObject(type, new StreamObjectContent(new WindowedStream(source), len));
         }
 
         public void Encode(DatabaseObject obj, Stream target)
@@ -43,7 +43,7 @@ namespace Inversion.Data
             {
                 writer.Write(obj.Type.ToCharArray());
                 writer.Write(' ');
-                writer.Write(obj.Length.ToString().ToCharArray());
+                writer.Write(obj.Content.Length.ToString().ToCharArray());
                 writer.Write((byte)0);
             }
 

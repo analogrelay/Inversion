@@ -8,6 +8,6 @@ namespace Inversion.Core.Facts.Data
 {
     class NullDatabaseObject : DatabaseObject
     {
-        public NullDatabaseObject() : base("null", 0, new NullObjectContent()) { }
+        public NullDatabaseObject() : base("null", new NullObjectContent()) { }
     }
 }

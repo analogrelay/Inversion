@@ -9,6 +9,11 @@ namespace Inversion.Core.Facts.Data
 {
     class NullObjectContent : IObjectContent
     {
+        public long Length
+        {
+            get { return 0L; }
+        }
+
         public Stream OpenRead()
         {
             return Stream.Null;

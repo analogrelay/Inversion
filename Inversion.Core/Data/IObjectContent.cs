@@ -8,6 +8,7 @@ namespace Inversion.Data
 {
     public interface IObjectContent
     {
+        long Length { get; }
         Stream OpenRead();
         void WriteTo(Stream strm);
     }

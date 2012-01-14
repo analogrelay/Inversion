@@ -118,6 +118,25 @@ namespace Inversion.Core.Facts.Data
         }
 
         [Fact]
+        public void ComputHashReturnsHashWithoutAffectingDictionary()
+        {
+            // Arrange
+            const string knownHash = "44ded774dda9dd8d53dcf37b7c77375180ab45dd";
+            Mock<IPersistentDictionary> mockStorage = new Mock<IPersistentDictionary>(MockBehavior.Strict);
+            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, new GitObjectCodec());
+            using (MemoryStream expectedStrm = new MemoryStream())
+            {
+                DatabaseObject expectedObj = new NullDatabaseObject();
+                
+                // Act
+                string hash = db.ComputeHash(expectedObj);
+
+                // Assert
+                Assert.Equal(knownHash, hash);
+            }
+        }
+
+        [Fact]
         public void ResolveReferencePassesThroughReferenceDirectory()
         {
             // Arrange

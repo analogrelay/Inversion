@@ -37,13 +37,13 @@ namespace Inversion.CommandLine.Commands
                 }
                 else if (Size)
                 {
-                    Console.WriteLine(obj.Length);
+                    Console.WriteLine(obj.Content.Length);
                 }
                 else if (Content)
                 {
                     using (StreamReader reader = new StreamReader(obj.Content.OpenRead()))
                     {
-                        Console.WriteLine(reader.ReadToEnd());
+                        Console.WriteLine(reader.ReadToEnd().Trim());
                     }
                 }
             }

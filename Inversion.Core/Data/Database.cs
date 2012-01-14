@@ -48,10 +48,29 @@ namespace Inversion.Data
             return Directory.ResolveReference(referenceName);
         }
 
-        public virtual void StoreObject(DatabaseObject obj)
+        public virtual string StoreObject(DatabaseObject obj)
         {
             if (obj == null) { throw new ArgumentNullException("obj"); }
 
+            var tup = ComputeHashCore(obj);
+            string hash = tup.Item1;
+            byte[] encoded = tup.Item2;
+
+            using (Stream strm = Storage.OpenWrite(hash, create: true))
+            {
+                strm.Write(encoded, 0, encoded.Length);
+            }
+            return hash;
+        }
+
+        public string ComputeHash(DatabaseObject obj)
+        {
+            if (obj == null) { throw new ArgumentNullException("obj"); }
+            return ComputeHashCore(obj).Item1;
+        }
+
+        private Tuple<string, byte[]> ComputeHashCore(DatabaseObject obj) {
+            
             // Encode the data to a memory stream.
             // PERF: This is not a great plan methinks... If this becomes a memory sink, we should write it to a file maybe?
             //  Alternatively we could stream the data out to a temp file while ALSO building the hash, then move the temp file to the right place
@@ -66,11 +85,7 @@ namespace Inversion.Data
 
             // Hash the data
             string hash = HashGenerator.HashData(encoded);
-
-            using (Stream strm = Storage.OpenWrite(hash, create: true))
-            {
-                strm.Write(encoded, 0, encoded.Length);
-            }
+            return Tuple.Create(hash, encoded);
         }
     }
 }

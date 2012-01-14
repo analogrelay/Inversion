@@ -23,8 +23,8 @@ namespace Inversion.Storage
         public Stream Open(string relativePath, FileAccess access, bool create)
         {
             if (String.IsNullOrEmpty(relativePath)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "relativePath"), "relativePath"); }
-            if (access < FileAccess.Read || access > FileAccess.Write) { throw new ArgumentOutOfRangeException("access"); }
-            return new FileStream(GetFullPath(relativePath), create ? FileMode.Open : FileMode.OpenOrCreate, access);
+            if (access < FileAccess.Read || access > FileAccess.ReadWrite) { throw new ArgumentOutOfRangeException("access"); }
+            return new FileStream(GetFullPath(relativePath), create ? FileMode.OpenOrCreate : FileMode.Open, access);
         }
 
         public string GetFullPath(string relativePath)
