@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\WindowedStreamFacts.cs" />
+    <Compile Include="BitUtilsFacts.cs" />
     <Compile Include="Data\HashGeneratorFacts.cs" />
     <Compile Include="ExceptionAssertMixin.cs" />
     <Compile Include="Data\DatabaseFacts.cs" />

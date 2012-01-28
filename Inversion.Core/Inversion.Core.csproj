@@ -51,7 +51,19 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CommonResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Data\BinaryReaderExtensions.cs" />
+    <Compile Include="Data\PackFile.cs" />
+    <Compile Include="Data\PackIndex.cs" />
+    <Compile Include="Data\PackIndexEntry.cs" />
+    <Compile Include="Data\PackIndexV1.cs" />
+    <Compile Include="Data\PackIndexV2.cs" />
     <Compile Include="Data\WindowedStream.cs" />
+    <Compile Include="BitUtils.cs" />
+    <Compile Include="CoreResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CoreResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Data\DatabaseObjectBuilder.cs" />
     <Compile Include="Data\GitObjectCodec.cs" />
     <Compile Include="Data\IObjectContent.cs" />
@@ -78,6 +90,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CommonResources.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Inversion.Utils</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CoreResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CoreResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
   </ItemGroup>

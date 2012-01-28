@@ -12,6 +12,8 @@ namespace Inversion.Storage
     {
         public IFileSystem Root { get; set; }
         public ICompressionStrategy Compression { get; set; }
+        public bool CanRead { get { return true; } }
+        public bool CanWrite { get { return true; } }
 
         public GitLooseFilesDictionary(IFileSystem root, ICompressionStrategy compression)
         {

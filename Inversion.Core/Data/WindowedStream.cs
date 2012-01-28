@@ -115,7 +115,7 @@ namespace Inversion.Data
         {
             if (_inner.Position < _base)
             {
-                throw new InvalidOperationException("Somehow the ConstrainedStream's inner stream ended up pointing before the base, once you've wrapped a Stream in a ConstrainedStream, do not adjust the position of the inner stream");
+                throw new InvalidOperationException("Somehow the WindowedStream's inner stream ended up pointing before the base, once you've wrapped a Stream in a ConstrainedStream, do not adjust the position of the inner stream");
             }
         }
     }
