@@ -25,7 +25,7 @@ namespace Inversion
             {
                 byte msb;
                 byte lsb;
-                if (!TryParseByte(value[i * 2], out msb) || !TryParseByte(value[(i * 2) + 1], out lsb))
+                if (!TryParseNybble(value[i * 2], out msb) || !TryParseNybble(value[(i * 2) + 1], out lsb))
                 {
                     throw new FormatException(String.Format(CoreResources.Input_Not_Valid_Hex_String, value));
                 }
@@ -34,7 +34,7 @@ namespace Inversion
             return output;
         }
 
-        private static bool TryParseByte(char c, out byte converted)
+        private static bool TryParseNybble(char c, out byte converted)
         {
             converted = 0;
             if (c >= '0' && c <= '9')
