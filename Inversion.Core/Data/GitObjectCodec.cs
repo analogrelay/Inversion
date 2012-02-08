@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using Inversion.Utils;
 
 namespace Inversion.Data
 {
@@ -30,7 +31,8 @@ namespace Inversion.Data
             }
 
             // Should now be at the object body, read that in (for now)
-            return new DatabaseObject(type, new StreamObjectContent(new WindowedStream(source), len));
+            byte[] data = source.ToByteArray();
+            return new DatabaseObject(type, data);
         }
 
         public void Encode(DatabaseObject obj, Stream target)
@@ -48,7 +50,7 @@ namespace Inversion.Data
             }
 
             // Write content
-            obj.Content.WriteTo(target);
+            target.Write(obj.Content, 0, obj.Length);
         }
 
         private string ReadToken(BinaryReader reader)

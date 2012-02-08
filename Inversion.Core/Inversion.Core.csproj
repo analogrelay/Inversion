@@ -51,7 +51,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CommonResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Data\BinaryReaderExtensions.cs" />
+    <Compile Include="Delta\VcdiffCodeTable.cs" />
+    <Compile Include="Delta\VcdiffCodeTableEntry.cs" />
+    <Compile Include="Delta\VcdiffConstants.cs" />
+    <Compile Include="Delta\VcdiffCopyMode.cs" />
+    <Compile Include="Delta\VcdiffCopyModeType.cs" />
+    <Compile Include="Delta\VcdiffOperation.cs" />
+    <Compile Include="Utils\BinaryReaderExtensions.cs" />
     <Compile Include="Data\GitPackFileDatabase.cs" />
     <Compile Include="Data\IPackedObjectDatabase.cs" />
     <Compile Include="Data\GitPackFile.cs" />
@@ -59,20 +65,20 @@
     <Compile Include="Data\GitPackIndexEntry.cs" />
     <Compile Include="Data\GitPackIndexV1.cs" />
     <Compile Include="Data\GitPackIndexV2.cs" />
-    <Compile Include="Data\WindowedStream.cs" />
-    <Compile Include="BitUtils.cs" />
+    <Compile Include="Utils\BitUtils.cs" />
     <Compile Include="CoreResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CoreResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Data\DatabaseObjectBuilder.cs" />
     <Compile Include="Data\GitObjectCodec.cs" />
     <Compile Include="Data\IObjectContent.cs" />
     <Compile Include="Data\IObjectCodec.cs" />
     <Compile Include="Data\HashGenerator.cs" />
-    <Compile Include="Data\StreamObjectContent.cs" />
-    <Compile Include="DisposeProtectedStream.cs" />
+    <Compile Include="Utils\StreamExtensions.cs" />
+    <Compile Include="Delta\IDeltaDecoder.cs" />
+    <Compile Include="Delta\VcdiffDecoder.cs" />
+    <Compile Include="Utils\DisposeProtectedStream.cs" />
     <Compile Include="Git.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DatabaseObject.cs" />

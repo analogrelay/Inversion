@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Inversion.Storage;
 using System.IO;
+using Inversion.Utils;
 
 namespace Inversion.Data
 {
@@ -95,7 +96,9 @@ namespace Inversion.Data
                     type = "<<delta of hash: " + BitConverter.ToString(rdr.ReadBytes(20)).Replace("-", "").ToLower() + ">>";
                 }
 
-                return new DatabaseObject(type, new StreamObjectContent(Compression.WrapStreamForDecompression(new WindowedStream(strm)), size));
+                byte[] data = Compression.WrapStreamForDecompression(strm)
+                                         .ToByteArray();
+                return new DatabaseObject(type, data);
             }
         }
 

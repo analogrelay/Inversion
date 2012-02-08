@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Inversion
+namespace Inversion.Utils
 {
     class DisposeProtectedStream : Stream
     {

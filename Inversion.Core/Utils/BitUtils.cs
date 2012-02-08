@@ -5,10 +5,15 @@ using System.Text;
 using Inversion.Utils;
 using System.Globalization;
 
-namespace Inversion
+namespace Inversion.Utils
 {
     internal static class BitUtils
     {
+        public static bool IsSet(byte indicator, byte flag)
+        {
+            return (indicator & flag) == flag;
+        }
+
         public static byte[] FromHexString(string value)
         {
             if (String.IsNullOrEmpty(value)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "value"), "value"); }
