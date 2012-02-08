@@ -12,7 +12,7 @@ namespace Inversion.CommandLine.Commands
     [Command("dump-index", "Dumps the specified index file to the console", MinArgs = 1, MaxArgs = 1, UsageSummary = "<idxfile>")]
     public class DumpIndexCommand : Command
     {
-        public override void ExecuteCommand()
+        public override int ExecuteCommand()
         {
             // Find the index file
             string indexFile = Arguments[0];
@@ -31,7 +31,7 @@ namespace Inversion.CommandLine.Commands
             Console.WriteLine("Entries:");
             
             GitPackIndexEntry last = null;
-            uint start = 0;
+            long start = 0;
             foreach (GitPackIndexEntry entry in index.GetEntries().OrderBy(i => i.Offset))
             {
                 if (last == null)
@@ -46,6 +46,7 @@ namespace Inversion.CommandLine.Commands
                 }
             }
             WriteEntry(last, null);
+            return 0;
         }
 
         private void WriteEntry(GitPackIndexEntry last, GitPackIndexEntry entry)
@@ -58,7 +59,7 @@ namespace Inversion.CommandLine.Commands
                 entry == null ? "<Rest Of File>" : FormatSize(entry.Offset - last.Offset));
         }
 
-        private string FormatSize(uint p)
+        private string FormatSize(long p)
         {
             if (p < 1024)
             {

@@ -10,18 +10,26 @@ namespace Inversion.Utils
     {
         public static byte[] ToByteArray(this Stream strm)
         {
+            return ToByteArray(strm, strm.Length);
+        }
+
+        public static byte[] ToByteArray(this Stream strm, long length)
+        {
             MemoryStream memStrm = strm as MemoryStream;
             if (memStrm != null)
             {
                 return memStrm.ToArray();
             }
 
-            return ReadChunk(strm, 0, strm.Length);
+            return ReadChunk(strm, 0, length);
         }
 
         public static byte[] ReadChunk(this Stream strm, long position, long length)
         {
-            strm.Seek(position, SeekOrigin.Begin);
+            if (strm.Position != position)
+            {
+                strm.Seek(position, SeekOrigin.Begin);
+            }
             return ReadChunk(strm, length);
         }
         public static byte[] ReadChunk(this Stream strm, long length)

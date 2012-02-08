@@ -50,7 +50,7 @@ namespace Inversion.CommandLine.Commands
             _productName = productName;
         }
 
-        public override void ExecuteCommand()
+        public override int ExecuteCommand()
         {
             if (!String.IsNullOrEmpty(CommandName))
             {
@@ -64,6 +64,7 @@ namespace Inversion.CommandLine.Commands
             {
                 ViewHelp();
             }
+            return 0;
         }
 
         public void ViewHelp()

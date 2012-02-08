@@ -14,6 +14,7 @@ namespace Inversion.Delta
 
         public void Decode(Stream source, Stream delta, Stream output)
         {
+            VcdiffAddressCache cache = new VcdiffAddressCache(VcdiffConstants.S_NEAR, VcdiffConstants.S_SAME);
             using(BinaryReader deltaReader = new BinaryReader(delta))
             {
                 // Verify the header
@@ -34,24 +35,34 @@ namespace Inversion.Delta
                 }
 
                 // Read windows
-                byte[] windowBuffer;
-                while (ReadWindow(source, deltaReader, output, out windowBuffer)) { }
+                while (deltaReader.BaseStream.Position < deltaReader.BaseStream.Length) {
+                    ReadWindow(source, deltaReader, output, cache);
+                }
             }
         }
 
-        private bool ReadWindow(Stream source, BinaryReader deltaReader, Stream output, out byte[] outputWindow)
+        private void ReadWindow(Stream source, BinaryReader deltaReader, Stream output, VcdiffAddressCache cache)
         {
             byte[] sourceWindow = ExtractSourceWindow(source, deltaReader, output);
             long deltaSize = deltaReader.ReadVarInteger();
             long targetSize = deltaReader.ReadVarInteger();
-            outputWindow = new byte[targetSize];
-
+            
             byte indicator = deltaReader.ReadByte();
             if (indicator != 0x00)
             {
-                throw new NotSupportedException("Secondary Compression is not currently supported");
+                throw new NotSupportedException("Secondary decompressors are not supported in this decoder");
             }
 
+            VcdiffDecoderContext context = LoadContext(deltaReader);
+            VcdiffDecoderInstruction inst;
+            while ((inst = context.GetNextOperation()) != null)
+            {
+                inst.Apply(source, output, cache);
+            }
+        }
+
+        private VcdiffDecoderContext LoadContext(BinaryReader deltaReader)
+        {
             long dataLen = deltaReader.ReadVarInteger();
             long instLen = deltaReader.ReadVarInteger();
             long addrLen = deltaReader.ReadVarInteger();
@@ -60,19 +71,13 @@ namespace Inversion.Delta
             byte[] inst = deltaReader.BaseStream.ReadChunk(instLen);
             byte[] addr = deltaReader.BaseStream.ReadChunk(addrLen);
 
-            long dataP = 0;
-            long instP = 0;
-            long addrP = 0;
-
-            while (instP < instLen)
+            return new VcdiffDecoderContext()
             {
-                ProcessInstruction(outputWindow, sourceWindow, data, inst, addr, ref dataP, ref instP, ref addrP);
-            }
-        }
-
-        private void ProcessInstruction(byte[] outputWindow, byte[] sourceWindow, byte[] data, byte[] inst, byte[] addr, ref long dataP, ref long instP, ref long addrP)
-        {
-            
+                Data = new MemoryStream(data),
+                Instructions = new BinaryReader(new MemoryStream(inst)),
+                Addresses = new BinaryReader(new MemoryStream(addr)),
+                CodeTable = _codeTable
+            };
         }
 
         private byte[] ExtractSourceWindow(Stream source, BinaryReader deltaReader, Stream output)

@@ -27,7 +27,7 @@ namespace Inversion.Core.Facts.Data
         [Fact]
         public void EncodeRequiresNonNullTarget()
         {
-            Assert.Throws<ArgumentNullException>(() => new GitObjectCodec().Encode(new NullDatabaseObject(), null))
+            Assert.Throws<ArgumentNullException>(() => new GitObjectCodec().Encode(DatabaseObject.Null(), null))
                   .WithParamName("target");
         }
     }

@@ -7,10 +7,10 @@ namespace Inversion.Data
 {
     public class GitPackIndexEntry
     {
-        public uint Offset { get; private set; }
+        public long Offset { get; private set; }
         public byte[] Hash { get; private set; }
 
-        public GitPackIndexEntry(uint offset, byte[] hash)
+        public GitPackIndexEntry(long offset, byte[] hash)
         {
             Offset = offset;
             Hash = hash;

@@ -13,6 +13,6 @@ namespace Inversion.CommandLine.Infrastructure
 
         IList<string> Arguments { get; }
 
-        void Execute();
+        int Execute();
     }
 }

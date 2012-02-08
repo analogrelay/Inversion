@@ -17,11 +17,14 @@ namespace Inversion.CommandLine.Commands
 
         [Option("Shows the size of the object", AltName = "s")]
         public bool Size { get; set; }
-
+        
         [Option("Shows the content of the object", AltName = "p")]
         public bool Content { get; set; }
 
-        public override void ExecuteCommand()
+        [Option("An optional file to output the data to, instead of writing it to the console", AltName = "o")]
+        public string Output { get; set; }
+
+        public override int ExecuteCommand()
         {
             // Find the object database
             DatabaseObject obj = Database.GetObject(Database.ResolveReference(Arguments[0]));
@@ -41,12 +44,20 @@ namespace Inversion.CommandLine.Commands
                 }
                 else if (Content)
                 {
-                    using (StreamReader reader = new StreamReader(obj.Content.OpenRead()))
+                    if (!String.IsNullOrEmpty(Output))
                     {
-                        Console.WriteLine(reader.ReadToEnd().Trim());
+                        File.WriteAllBytes(Output, obj.Content);
+                    }
+                    else
+                    {
+                        using (StreamReader reader = new StreamReader(new MemoryStream(obj.Content)))
+                        {
+                            Console.WriteLine(reader.ReadToEnd().Trim());
+                        }
                     }
                 }
             }
+            return 0;
         }
     }
 }

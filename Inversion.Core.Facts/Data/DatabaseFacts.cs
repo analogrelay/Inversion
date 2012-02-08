@@ -87,7 +87,7 @@ namespace Inversion.Core.Facts.Data
             Mock<IObjectCodec> mockCodec = new Mock<IObjectCodec>(MockBehavior.Strict);
             Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, mockCodec.Object, new Mock<IPackedObjectDatabase>().Object);
             Stream expectedStrm = new MemoryStream();
-            DatabaseObject expectedObj = new NullDatabaseObject();
+            DatabaseObject expectedObj = DatabaseObject.Null();
             mockStorage.Setup(s => s.Exists("abcdefghij")).Returns(true);
             mockStorage.Setup(s => s.OpenRead("abcdefghij")).Returns(expectedStrm);
             mockCodec.Setup(d => d.Decode(expectedStrm)).Returns(expectedObj);
@@ -105,7 +105,7 @@ namespace Inversion.Core.Facts.Data
             Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object);
             using (MemoryStream expectedStrm = new MemoryStream())
             {
-                DatabaseObject expectedObj = new NullDatabaseObject();
+                DatabaseObject expectedObj = DatabaseObject.Null();
                 mockStorage.Setup(s => s.OpenWrite(knownHash, /* create */ true)).Returns(expectedStrm);
 
                 // Act
@@ -126,7 +126,7 @@ namespace Inversion.Core.Facts.Data
             Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object);
             using (MemoryStream expectedStrm = new MemoryStream())
             {
-                DatabaseObject expectedObj = new NullDatabaseObject();
+                DatabaseObject expectedObj = DatabaseObject.Null();
                 
                 // Act
                 string hash = db.ComputeHash(expectedObj);

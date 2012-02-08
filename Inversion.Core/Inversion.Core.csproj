@@ -10,10 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Inversion</RootNamespace>
     <AssemblyName>Inversion.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\Inversion\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip.Reduced">
@@ -51,11 +54,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CommonResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Data\DatabaseObjectType.cs" />
+    <Compile Include="Delta\VcdiffAddressCache.cs" />
     <Compile Include="Delta\VcdiffCodeTable.cs" />
     <Compile Include="Delta\VcdiffCodeTableEntry.cs" />
     <Compile Include="Delta\VcdiffConstants.cs" />
     <Compile Include="Delta\VcdiffCopyMode.cs" />
     <Compile Include="Delta\VcdiffCopyModeType.cs" />
+    <Compile Include="Delta\VcdiffDecoderContext.cs" />
+    <Compile Include="Delta\VcdiffDecoderInstruction.cs" />
     <Compile Include="Delta\VcdiffOperation.cs" />
     <Compile Include="Utils\BinaryReaderExtensions.cs" />
     <Compile Include="Data\GitPackFileDatabase.cs" />
@@ -98,6 +105,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CommonResources.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Inversion.Utils</CustomToolNamespace>
+      <LogicalName>Inversion.CommonResources.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="CoreResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

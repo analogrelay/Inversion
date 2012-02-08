@@ -31,8 +31,8 @@ namespace Inversion.Data
             }
 
             // Should now be at the object body, read that in (for now)
-            byte[] data = source.ToByteArray();
-            return new DatabaseObject(type, data);
+            byte[] data = source.ToByteArray(len);
+            return new DatabaseObject(DatabaseObjectTypeHelper.Parse(type), data);
         }
 
         public void Encode(DatabaseObject obj, Stream target)
@@ -43,7 +43,7 @@ namespace Inversion.Data
             // Write header
             using (BinaryWriter writer = new BinaryWriter(new DisposeProtectedStream(target), Encoding.ASCII))
             {
-                writer.Write(obj.Type.ToCharArray());
+                writer.Write(obj.Type.ToString().ToLowerInvariant().ToCharArray());
                 writer.Write(' ');
                 writer.Write(obj.Content.Length.ToString().ToCharArray());
                 writer.Write((byte)0);

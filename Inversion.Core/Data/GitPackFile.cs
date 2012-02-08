@@ -5,6 +5,8 @@ using System.Text;
 using Inversion.Storage;
 using System.IO;
 using Inversion.Utils;
+using System.Diagnostics;
+using Inversion.Delta;
 
 namespace Inversion.Data
 {
@@ -14,13 +16,15 @@ namespace Inversion.Data
         public string PackFileName { get; private set; }
         public ICompressionStrategy Compression { get; private set; }
         public GitPackIndex Index { get; private set; }
+        public IDeltaDecoder Delta { get; private set; }
 
-        public GitPackFile(IFileSystem fileSystem, string filename, ICompressionStrategy compression, GitPackIndex index)
+        public GitPackFile(IFileSystem fileSystem, string filename, ICompressionStrategy compression, GitPackIndex index, IDeltaDecoder delta)
         {
             FileSystem = fileSystem;
             PackFileName = filename;
             Compression = compression;
             Index = index;
+            Delta = delta;
         }
 
         public static GitPackFile Open(IFileSystem fs, string baseName)
@@ -29,7 +33,8 @@ namespace Inversion.Data
                 fs,
                 baseName + ".pack",
                 new ZlibCompressionStrategy(),
-                GitPackIndex.Open(fs, baseName + ".idx"));
+                GitPackIndex.Open(fs, baseName + ".idx"),
+                new VcdiffDecoder());
         }
 
         public virtual bool Exists(string hash)
@@ -49,37 +54,32 @@ namespace Inversion.Data
 
             // Open the pack file and read the object out
             Stream packFile = FileSystem.Open(PackFileName, FileAccess.Read, create: false);
-            long size = 0;
-            string type = null;
+            return GetObjectCore(entry.Offset, packFile, recursing: false);
+        }
 
-            using (DisposeProtectedStream strm = new DisposeProtectedStream(packFile))
-            using (BinaryReader rdr = new BinaryReader(strm))
+        private DatabaseObject GetObjectCore(long objectOffset, Stream packFile, bool recursing)
+        {
+            long size = 0;
+            DatabaseObjectType type = DatabaseObjectType.Null;
+
+            using (BinaryReader rdr = new BinaryReader(packFile, Encoding.UTF8, leaveOpen: true))
             {
-                strm.Seek(entry.Offset, SeekOrigin.Begin);
+                packFile.Seek(objectOffset, SeekOrigin.Begin);
 
                 // ==01234567==
                 // | 1TTTSSSS |
                 // ============
                 // T = Type
                 // S = Size Start
-                byte read = rdr.ReadByte();
-                type = InterpretType((read & 0x70) >> 4);
-                size = read & 0x0F;
+                var sizeAndType = rdr.ReadVarInteger(3);
+                type = InterpretType(sizeAndType.Item1);
+                size = sizeAndType.Item2;
 
-                // Now read until the byte doesn't start with "1"
-                // To add the first value, we shift the current value by 4 first
-                // But afterwards, shift by 7
-                int shiftVal = 4;
-                do
+                long deltaOffset = -1;
+                if (type == DatabaseObjectType.OffsetDelta)
                 {
-                    read = rdr.ReadByte();
-                    size += ((read & 0x7F) << shiftVal) /* select low 7 bits only */;
-                    shiftVal += 7;
-                } while ((read & 0x80) == 0x80);
-
-                if (type == "<<offset-delta>>")
-                {
-                    read = rdr.ReadByte();
+                    // ReadVarInteger doesn't do the right thing here...
+                    byte read = rdr.ReadByte();
                     long offset = read & 0x7F;
                     while ((read & 0x80) == 0x80)
                     {
@@ -88,38 +88,55 @@ namespace Inversion.Data
                         offset <<= 7;
                         offset += (read & 0x7F);
                     }
-                    offset = entry.Offset - offset;
-                    type = "<<delta of offset: " + offset.ToString("X") + ">>";
+                    deltaOffset = objectOffset - offset;
                 }
-                else if (type == "<<ref-delta>>")
+                else if (type == DatabaseObjectType.HashDelta)
                 {
-                    type = "<<delta of hash: " + BitConverter.ToString(rdr.ReadBytes(20)).Replace("-", "").ToLower() + ">>";
+                    byte[] hash = rdr.ReadBytes(20);
+                    GitPackIndexEntry entry = Index.GetEntry(hash);
+                    deltaOffset = entry.Offset;
                 }
+                
+                byte[] data = Compression.WrapStreamForDecompression(packFile)
+                                         .ToByteArray(size);
 
-                byte[] data = Compression.WrapStreamForDecompression(strm)
-                                         .ToByteArray();
-                return new DatabaseObject(type, data);
+                if (deltaOffset >= 0)
+                {
+                    DatabaseObject source = GetObjectCore(deltaOffset, packFile, recursing: true);
+                    return ConstructFromDelta(source, data);
+                }
+                else
+                {
+                    return new DatabaseObject(type, data);
+                }
             }
         }
 
-        private string InterpretType(int type)
+        private DatabaseObject ConstructFromDelta(DatabaseObject source, byte[] deltaData)
+        {
+            byte[] data;
+            using (MemoryStream output = new MemoryStream())
+            using (MemoryStream input = new MemoryStream(source.Content))
+            using (MemoryStream delta = new MemoryStream(deltaData))
+            {
+                Delta.Decode(input, delta, output);
+                output.Flush();
+                data = output.ToArray();
+            }
+            return new DatabaseObject(source.Type, data);
+        }
+
+        private DatabaseObjectType InterpretType(int type)
         {
             switch (type)
             {
-                case 1:
-                    return "commit";
-                case 2:
-                    return "tree";
-                case 3:
-                    return "blob";
-                case 4:
-                    return "tag";
-                case 6:
-                    return "<<offset-delta>>";
-                case 7:
-                    return "<<ref-delta>>";
-                default:
-                    return "<<unknown>>";
+                case 1: return DatabaseObjectType.Commit;
+                case 2: return DatabaseObjectType.Tree;
+                case 3: return DatabaseObjectType.Blob;
+                case 4: return DatabaseObjectType.Tag;
+                case 6: return DatabaseObjectType.OffsetDelta;
+                case 7: return DatabaseObjectType.HashDelta;
+                default: return DatabaseObjectType.Null;
             }
         }
     }

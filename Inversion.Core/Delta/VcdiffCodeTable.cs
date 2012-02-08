@@ -34,8 +34,8 @@ namespace Inversion.Delta
         {
             VcdiffCodeTableEntry[] entries = new VcdiffCodeTableEntry[256];
 
-            entries[0] = new VcdiffCodeTableEntry(VcdiffOperation.Run, 0, VcdiffCopyMode.None);
             int ptr = 0;
+            entries[ptr++] = new VcdiffCodeTableEntry(VcdiffOperation.Run, 0, VcdiffCopyMode.None);
             for (int i = 0; i < 18; i++)
             {
                 entries[ptr++] = new VcdiffCodeTableEntry(VcdiffOperation.Add, (byte)(i - 1), VcdiffCopyMode.None);
@@ -43,21 +43,29 @@ namespace Inversion.Delta
             Debug.Assert(ptr == 19);
             for (int mode = 0; mode <= 8; mode++)
             {
-                for (int copySize = 0; copySize < 15; copySize++)
+                for (int copySize = 0; copySize <= 15; copySize++)
                 {
                     byte size = (byte)(copySize == 0 ? 0 : copySize + 2);
                     entries[ptr++] = new VcdiffCodeTableEntry(VcdiffOperation.Copy, size, VcdiffCopyMode.Decode((byte)mode, VcdiffConstants.S_NEAR));
                 }
             }
             Debug.Assert(ptr == 163);
-            for (int mode = 0; mode <= 8; mode++)
+            for (int mode = 0; mode <= 5; mode++)
             {
                 for (int addSize = 1; addSize <= 4; addSize++)
                 {
-                    for (int copySize = 4; copySize < 6; copySize++)
+                    for (int copySize = 4; copySize <= 6; copySize++)
                     {
                         entries[ptr++] = new VcdiffCodeTableEntry(VcdiffOperation.Add, (byte)addSize, VcdiffCopyMode.None, VcdiffOperation.Copy, (byte)copySize, VcdiffCopyMode.Decode((byte)mode, VcdiffConstants.S_NEAR));
                     }
+                }
+            }
+            Debug.Assert(ptr == 235);
+            for (int mode = 6; mode <= 8; mode++)
+            {
+                for (int addSize = 1; addSize <= 4; addSize++)
+                {
+                    entries[ptr++] = new VcdiffCodeTableEntry(VcdiffOperation.Add, (byte)addSize, VcdiffCopyMode.None, VcdiffOperation.Copy, 4, VcdiffCopyMode.Decode((byte)mode, VcdiffConstants.S_NEAR));
                 }
             }
             Debug.Assert(ptr == 247);

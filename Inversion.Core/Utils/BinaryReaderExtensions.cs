@@ -21,9 +21,28 @@ namespace Inversion.Utils
             return ReadVarInteger(self, 0).Item2;
         }
 
-        public static Tuple<int, long> ReadVarInteger(this BinaryReader self, int prefixLength)
+        public static Tuple<int, long> ReadVarInteger(this BinaryReader self, byte prefixLength)
         {
-            return Tuple.Create(0, 0L);
+            int read = self.ReadByte();
+
+            // Read the continuation byte and then remove it
+            long value = read & 0x7F /* 0111 1111 */;
+
+            int shiftVal = 7 - prefixLength;
+            int prefix = (int)(value >> shiftVal);
+            if (prefixLength > 0)
+            {
+                value = value & (((int)Math.Pow(2, prefixLength) - 1));
+            }
+            
+            while ((read & 0x80 /* 1000 0000 */) == 0x80)
+            {
+                read = self.ReadByte();
+                value += ((read & 0x7F) << shiftVal);
+                shiftVal += 7;
+            }
+
+            return Tuple.Create(prefix, value);
         }
     }
 }

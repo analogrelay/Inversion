@@ -51,20 +51,36 @@ namespace Inversion.CommandLine.Infrastructure
             }
         }
 
-        public void Execute()
+        public int Execute()
         {
             WaitForDebugger();
             if (Help)
             {
                 HelpCommand.ViewHelpForCommand(CommandAttribute.CommandName);
+                return 0;
             }
             else
             {
-                ExecuteCommand();
+                if (Debug)
+                {
+                    return ExecuteCommand();
+                }
+                else
+                {
+                    try
+                    {
+                        return ExecuteCommand();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteError(e.Message);
+                        return 1;
+                    }
+                }
             }
         }
 
-        public abstract void ExecuteCommand();
+        public abstract int ExecuteCommand();
 
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This method does quite a bit of processing.")]
         public virtual CommandAttribute GetCommandAttribute()
