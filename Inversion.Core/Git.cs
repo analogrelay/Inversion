@@ -32,13 +32,16 @@ namespace Inversion
 
         public static Database OpenGitDatabase(string gitDir)
         {
+            string objectsDir = Path.Combine(gitDir, "objects");
+            string packDir = Path.Combine(objectsDir, "pack");
             return new Database(
                 new HashGenerator(new SHA1Managed()),
                 new GitReferenceDirectory(new PhysicalFileSystem(gitDir)),
                 new GitLooseFilesDictionary(
-                    new PhysicalFileSystem(Path.Combine(gitDir, "objects")),
+                    new PhysicalFileSystem(objectsDir),
                     new ZlibCompressionStrategy()),
-                new GitObjectCodec());
+                new GitObjectCodec(),
+                new GitPackFileDatabase(new PhysicalFileSystem(packDir)));
         }
     }
 }

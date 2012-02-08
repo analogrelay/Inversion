@@ -4,17 +4,23 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
+using Inversion.Storage;
 
 namespace Inversion.Data
 {
-    public abstract class PackIndex
+    public abstract class GitPackIndex
     {
         private static readonly byte[] V2PlusSignature = new byte[] { 255, 116, 79, 99 };
         internal const int Sha1HashSize = 20;
 
         public abstract Version Version { get; }
 
-        public static PackIndex Open(Func<FileAccess, Stream> fileOpener)
+        public static GitPackIndex Open(IFileSystem fs, string path)
+        {
+            return Open(access => fs.Open(path, access, create: false));
+        }
+
+        public static GitPackIndex Open(Func<FileAccess, Stream> fileOpener)
         {
             using (BinaryReader rdr = new BinaryReader(fileOpener(FileAccess.Read)))
             {
@@ -25,17 +31,17 @@ namespace Inversion.Data
                     switch (ver)
                     {
                         case 2:
-                            return new PackIndexV2(fileOpener);
+                            return new GitPackIndexV2(fileOpener);
                         default:
                             throw new InvalidDataException(String.Format("Unknown Pack File version: '{0}'", ver));
                     }
                 }
-                return new PackIndexV1(fileOpener);
+                return new GitPackIndexV1(fileOpener);
             }
         }
 
-        public abstract PackIndexEntry GetEntry(byte[] hash);
-        public abstract IEnumerable<PackIndexEntry> GetEntries();
+        public abstract GitPackIndexEntry GetEntry(byte[] hash);
+        public abstract IEnumerable<GitPackIndexEntry> GetEntries();
 
         public virtual bool EntryExists(byte[] hash)
         {

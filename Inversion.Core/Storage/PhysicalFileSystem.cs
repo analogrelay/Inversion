@@ -46,7 +46,18 @@ namespace Inversion.Storage
 
         public string[] ResolveWildcard(string relativeWildCardPath)
         {
-            return Directory.GetFiles(Root, relativeWildCardPath, SearchOption.AllDirectories);
+            try
+            {
+                return Directory.GetFiles(Root, relativeWildCardPath, SearchOption.AllDirectories);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return new string[0];
+            }
+            catch (FileNotFoundException)
+            {
+                return new string[0];
+            }
         }
     }
 }

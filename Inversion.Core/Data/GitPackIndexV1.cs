@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Inversion.Data
 {
-    internal class PackIndexV1 : PackIndex
+    internal class GitPackIndexV1 : GitPackIndex
     {
         private const int FanoutStart = 0;
 
@@ -19,14 +19,13 @@ namespace Inversion.Data
             get { return new Version(1, 0, 0, 0); }
         }
 
-        public PackIndexV1(Func<FileAccess, Stream> file)
+        public GitPackIndexV1(Func<FileAccess, Stream> file)
         {
             _file = file;
         }
 
-        public override PackIndexEntry GetEntry(byte[] hash)
+        public override GitPackIndexEntry GetEntry(byte[] hash)
         {
-            Debug.Assert(hash.Length == 256);
             using(BinaryReader reader = new BinaryReader(_file(FileAccess.Read))) {
                 // Get the value from the fanout table to figure out where to start
                 RangeInfo range = GetFanout(reader, FanoutStart, hash[0]);
@@ -35,7 +34,7 @@ namespace Inversion.Data
                 reader.BaseStream.Seek(range.Start, SeekOrigin.Begin);
 
                 // Start searching
-                foreach (PackIndexEntry entry in IterateEntries(reader, range.End))
+                foreach (GitPackIndexEntry entry in IterateEntries(reader, range.End))
                 {
                     if (entry.Hash.SequenceEqual(hash))
                     {
@@ -46,7 +45,7 @@ namespace Inversion.Data
             }
         }
 
-        public override IEnumerable<PackIndexEntry> GetEntries()
+        public override IEnumerable<GitPackIndexEntry> GetEntries()
         {
             using (BinaryReader reader = new BinaryReader(_file(FileAccess.Read)))
             {
@@ -54,13 +53,13 @@ namespace Inversion.Data
             }
         }
 
-        private IEnumerable<PackIndexEntry> IterateEntries(BinaryReader reader, uint count)
+        private IEnumerable<GitPackIndexEntry> IterateEntries(BinaryReader reader, uint count)
         {
             for (int i = 0; i < count; i++)
             {
                 uint offset = reader.ReadNetworkUInt32();
                 byte[] hash = reader.ReadBytes(Sha1HashSize);
-                yield return new PackIndexEntry(offset, hash);
+                yield return new GitPackIndexEntry(offset, hash);
             }
         }
     }

@@ -52,11 +52,13 @@
       <DependentUpon>CommonResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Data\BinaryReaderExtensions.cs" />
-    <Compile Include="Data\PackFile.cs" />
-    <Compile Include="Data\PackIndex.cs" />
-    <Compile Include="Data\PackIndexEntry.cs" />
-    <Compile Include="Data\PackIndexV1.cs" />
-    <Compile Include="Data\PackIndexV2.cs" />
+    <Compile Include="Data\GitPackFileDatabase.cs" />
+    <Compile Include="Data\IPackedObjectDatabase.cs" />
+    <Compile Include="Data\GitPackFile.cs" />
+    <Compile Include="Data\GitPackIndex.cs" />
+    <Compile Include="Data\GitPackIndexEntry.cs" />
+    <Compile Include="Data\GitPackIndexV1.cs" />
+    <Compile Include="Data\GitPackIndexV2.cs" />
     <Compile Include="Data\WindowedStream.cs" />
     <Compile Include="BitUtils.cs" />
     <Compile Include="CoreResources.Designer.cs">

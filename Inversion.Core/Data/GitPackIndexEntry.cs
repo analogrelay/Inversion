@@ -5,12 +5,12 @@ using System.Text;
 
 namespace Inversion.Data
 {
-    public class PackIndexEntry
+    public class GitPackIndexEntry
     {
         public uint Offset { get; private set; }
         public byte[] Hash { get; private set; }
 
-        public PackIndexEntry(uint offset, byte[] hash)
+        public GitPackIndexEntry(uint offset, byte[] hash)
         {
             Offset = offset;
             Hash = hash;

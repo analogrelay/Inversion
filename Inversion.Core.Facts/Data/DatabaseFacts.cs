@@ -17,28 +17,28 @@ namespace Inversion.Core.Facts.Data
         [Fact]
         public void ConstructorRequiresNonNullReferenceDirectory()
         {
-            Assert.Throws<ArgumentNullException>(() => new Database(new HashGenerator(new SHA1Managed()), null, new Mock<IPersistentDictionary>().Object, new GitObjectCodec()))
+            Assert.Throws<ArgumentNullException>(() => new Database(new HashGenerator(new SHA1Managed()), null, new Mock<IPersistentDictionary>().Object, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object))
                   .WithParamName("directory");
         }
 
         [Fact]
         public void ConstructorRequiresNonNullDictionaryStorage()
         {
-            Assert.Throws<ArgumentNullException>(() => new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, null, new GitObjectCodec()))
+            Assert.Throws<ArgumentNullException>(() => new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, null, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object))
                   .WithParamName("storage");
         }
 
         [Fact]
         public void ConstructorRequiresNonNullObjectDecoder()
         {
-            Assert.Throws<ArgumentNullException>(() => new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, null))
+            Assert.Throws<ArgumentNullException>(() => new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, null, new Mock<IPackedObjectDatabase>().Object))
                   .WithParamName("codec");
         }
 
         [Fact]
         public void GetObjectRequiresNonNullOrEmptyHash()
         {
-            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec());
+            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object);
             Assert.Throws<ArgumentException>(() => db.GetObject(null))
                   .WithParamName("hash")
                   .WithMessage(CommonResources.Argument_Cannot_Be_Null_Or_Empty, "hash");
@@ -50,7 +50,7 @@ namespace Inversion.Core.Facts.Data
         [Fact]
         public void ResolveReferenceRequiresNonNullOrEmptyReferenceName()
         {
-            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec());
+            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object);
             Assert.Throws<ArgumentException>(() => db.ResolveReference(null))
                   .WithParamName("referenceName")
                   .WithMessage(CommonResources.Argument_Cannot_Be_Null_Or_Empty, "referenceName");
@@ -62,7 +62,7 @@ namespace Inversion.Core.Facts.Data
         [Fact]
         public void StoreObjectRequiresNonNullObject()
         {
-            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec());
+            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object);
             Assert.Throws<ArgumentNullException>(() => db.StoreObject(null))
                   .WithParamName("obj");
         }
@@ -72,7 +72,7 @@ namespace Inversion.Core.Facts.Data
         {
             // Arrange
             Mock<IPersistentDictionary> mockStorage = new Mock<IPersistentDictionary>();
-            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, new GitObjectCodec());
+            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object);
             mockStorage.Setup(s => s.Exists("abcdefghij")).Returns(false);
 
             // Act/Assert
@@ -85,7 +85,7 @@ namespace Inversion.Core.Facts.Data
             // Arrange
             Mock<IPersistentDictionary> mockStorage = new Mock<IPersistentDictionary>(MockBehavior.Strict);
             Mock<IObjectCodec> mockCodec = new Mock<IObjectCodec>(MockBehavior.Strict);
-            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, mockCodec.Object);
+            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, mockCodec.Object, new Mock<IPackedObjectDatabase>().Object);
             Stream expectedStrm = new MemoryStream();
             DatabaseObject expectedObj = new NullDatabaseObject();
             mockStorage.Setup(s => s.Exists("abcdefghij")).Returns(true);
@@ -102,7 +102,7 @@ namespace Inversion.Core.Facts.Data
             // Arrange
             const string knownHash = "44ded774dda9dd8d53dcf37b7c77375180ab45dd";
             Mock<IPersistentDictionary> mockStorage = new Mock<IPersistentDictionary>(MockBehavior.Strict);
-            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, new GitObjectCodec());
+            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object);
             using (MemoryStream expectedStrm = new MemoryStream())
             {
                 DatabaseObject expectedObj = new NullDatabaseObject();
@@ -123,7 +123,7 @@ namespace Inversion.Core.Facts.Data
             // Arrange
             const string knownHash = "44ded774dda9dd8d53dcf37b7c77375180ab45dd";
             Mock<IPersistentDictionary> mockStorage = new Mock<IPersistentDictionary>(MockBehavior.Strict);
-            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, new GitObjectCodec());
+            Database db = new Database(new HashGenerator(new SHA1Managed()), new Mock<IReferenceDirectory>().Object, mockStorage.Object, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object);
             using (MemoryStream expectedStrm = new MemoryStream())
             {
                 DatabaseObject expectedObj = new NullDatabaseObject();
@@ -141,7 +141,7 @@ namespace Inversion.Core.Facts.Data
         {
             // Arrange
             Mock<IReferenceDirectory> mockDirectory = new Mock<IReferenceDirectory>();
-            Database db = new Database(new HashGenerator(new SHA1Managed()), mockDirectory.Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec());
+            Database db = new Database(new HashGenerator(new SHA1Managed()), mockDirectory.Object, new Mock<IPersistentDictionary>().Object, new GitObjectCodec(), new Mock<IPackedObjectDatabase>().Object);
             mockDirectory.Setup(r => r.ResolveReference("foo")).Returns("bar");
 
             // Act/Assert

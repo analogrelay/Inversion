@@ -14,21 +14,24 @@ namespace Inversion.Data
         internal HashGenerator HashGenerator { get; private set; }
         internal IReferenceDirectory Directory { get; private set; }
         internal IPersistentDictionary Storage { get; private set; }
+        internal IPackedObjectDatabase PackedObjects { get; private set; }
         internal IObjectCodec Codec { get; private set; }
 
         // Inheritors can avoid setting Storage and Codec, at their own risk...
         [Obsolete("Be careful when using this constructor as the Storage and Codec properties will be null.")]
         protected Database() { }
-        public Database(HashGenerator hashGenerator, IReferenceDirectory directory, IPersistentDictionary storage, IObjectCodec codec)
+        public Database(HashGenerator hashGenerator, IReferenceDirectory directory, IPersistentDictionary storage, IObjectCodec codec, IPackedObjectDatabase packedObjects)
         {
             if (hashGenerator == null) { throw new ArgumentNullException("hashAlgorithm"); }
             if (directory == null) { throw new ArgumentNullException("directory"); }
             if (storage == null) { throw new ArgumentNullException("storage"); }
             if (codec == null) { throw new ArgumentNullException("codec"); }
+            if (packedObjects == null) { throw new ArgumentNullException("packedObjects"); }
             HashGenerator = hashGenerator;
             Directory = directory;
             Storage = storage;
             Codec = codec;
+            PackedObjects = packedObjects;
         }
 
         public virtual DatabaseObject GetObject(string hash)
@@ -39,7 +42,10 @@ namespace Inversion.Data
             {
                 return Codec.Decode(Storage.OpenRead(hash));
             }
-            return null;
+            else
+            {
+                return PackedObjects.GetObject(hash);
+            }
         }
 
         public virtual string ResolveReference(string referenceName)

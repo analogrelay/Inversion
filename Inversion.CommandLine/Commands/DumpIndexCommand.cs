@@ -22,7 +22,7 @@ namespace Inversion.CommandLine.Commands
             }
 
             // Open the index
-            PackIndex index = PackIndex.Open(access => File.Open(indexFile, FileMode.Open, access));
+            GitPackIndex index = GitPackIndex.Open(access => File.Open(indexFile, FileMode.Open, access));
 
             // Dump the values
             Console.WriteLine("Dumping Index {0}.", Path.GetFileName(indexFile));
@@ -30,9 +30,9 @@ namespace Inversion.CommandLine.Commands
             Console.WriteLine();
             Console.WriteLine("Entries:");
             
-            PackIndexEntry last = null;
+            GitPackIndexEntry last = null;
             uint start = 0;
-            foreach (PackIndexEntry entry in index.GetEntries().OrderBy(i => i.Offset))
+            foreach (GitPackIndexEntry entry in index.GetEntries().OrderBy(i => i.Offset))
             {
                 if (last == null)
                 {
@@ -48,7 +48,7 @@ namespace Inversion.CommandLine.Commands
             WriteEntry(last, null);
         }
 
-        private void WriteEntry(PackIndexEntry last, PackIndexEntry entry)
+        private void WriteEntry(GitPackIndexEntry last, GitPackIndexEntry entry)
         {
             Console.WriteLine(
                 "\t{0} [{1}-{2}] (Len: {3})", 
