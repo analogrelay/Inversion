@@ -56,6 +56,7 @@
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="CommandManager.cs" />
     <Compile Include="Commands\CatFileCommand.cs" />
+    <Compile Include="Commands\DumpIndexCommand.cs" />
     <Compile Include="Commands\GitCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="ICommandManager.cs" />

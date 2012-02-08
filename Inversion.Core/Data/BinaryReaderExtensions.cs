@@ -9,9 +9,11 @@ namespace Inversion.Data
 {
     internal static class BinaryReaderExtensions
     {
-        public static int ReadNetworkInt32(this BinaryReader self)
+        public static uint ReadNetworkUInt32(this BinaryReader self)
         {
-            return IPAddress.NetworkToHostOrder(self.ReadInt32());
+            int read = self.ReadInt32();
+            int hostOrder = IPAddress.NetworkToHostOrder(read);
+            return (uint)hostOrder;
         }
     }
 }

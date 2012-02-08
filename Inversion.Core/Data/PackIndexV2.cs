@@ -7,11 +7,18 @@ using System.Diagnostics;
 
 namespace Inversion.Data
 {
-    class PackIndexV2 : PackIndex
+    internal class PackIndexV2 : PackIndex
     {
-        private const int FanoutStart = 8;
-        
+        private const uint FanoutStart = 8;
+        private const uint TablesStart = /* header */ (2 * 4) + /* fanout */ (256 * 4);
+        private const uint OffsetTableMultiplier = /* sha1 */ 20 + /* crc */ 4;
+
         private Func<FileAccess, Stream> _file;
+
+        public override Version Version
+        {
+            get { return new Version(2, 0, 0, 0); }
+        }
 
         public PackIndexV2(Func<FileAccess, Stream> file)
         {
@@ -30,7 +37,7 @@ namespace Inversion.Data
                 reader.BaseStream.Seek(range.Start, SeekOrigin.Begin);
 
                 // Start searching
-                Tuple<int, byte[]> shaEntry = FindShaEntry(reader, hash, range);
+                Tuple<uint, byte[]> shaEntry = FindShaEntry(reader, hash, range);
                 if (shaEntry != null)
                 {
                     return GetEntry(reader, shaEntry.Item1, range.TableLength, shaEntry.Item2);
@@ -39,9 +46,29 @@ namespace Inversion.Data
             return null;
         }
 
-        private static Tuple<int, byte[]> FindShaEntry(BinaryReader reader, byte[] hash, RangeInfo range)
+        public override IEnumerable<PackIndexEntry> GetEntries()
         {
-            foreach (Tuple<int, byte[]> entry in IterateShas(reader, range.Start, range.End))
+            using (BinaryReader reader = new BinaryReader(_file(FileAccess.Read)))
+            {
+                RangeInfo range = GetFanout(reader, FanoutStart, 0);
+
+                // Read Shas
+                reader.BaseStream.Seek(TablesStart, SeekOrigin.Begin);
+                byte[][] shas = IterateShas(reader, 0, range.TableLength).Select(t => t.Item2).ToArray();
+
+                // Read Offsets
+                reader.BaseStream.Seek(TablesStart + (OffsetTableMultiplier * range.TableLength), SeekOrigin.Begin);
+                for (int i = 0; i < range.TableLength; i++)
+                {
+                    uint start = reader.ReadNetworkUInt32();
+                    yield return new PackIndexEntry(start, shas[i]);
+                }
+            }
+        }
+
+        private static Tuple<uint, byte[]> FindShaEntry(BinaryReader reader, byte[] hash, RangeInfo range)
+        {
+            foreach (Tuple<uint, byte[]> entry in IterateShas(reader, range.Start, range.End))
             {
                 if (entry.Item2.SequenceEqual(hash))
                 {
@@ -51,9 +78,9 @@ namespace Inversion.Data
             return null;
         }
 
-        private static IEnumerable<Tuple<int, byte[]>> IterateShas(BinaryReader reader, int start, int count)
+        private static IEnumerable<Tuple<uint, byte[]>> IterateShas(BinaryReader reader, uint start, uint count)
         {
-            int position = start;
+            uint position = start;
             for (int i = 0; i < count; i++)
             {
                 byte[] hash = reader.ReadBytes(Sha1HashSize);
@@ -61,19 +88,12 @@ namespace Inversion.Data
             }
         }
 
-        private static PackIndexEntry GetEntry(BinaryReader reader, int index, int tableLength, byte[] hash)
+        private static PackIndexEntry GetEntry(BinaryReader reader, uint index, uint tableLength, byte[] hash)
         {
-            const int tablesStart = /* header */ (2 * 4) + /* fanout */ (256 * 4);
-            const int tablesMult = /* sha1 */ 20 + /* crc */ 4;
-            int offsetStart = tablesStart + (tablesMult * tableLength);
+            uint offsetStart = TablesStart + (OffsetTableMultiplier * tableLength);
             reader.BaseStream.Seek(offsetStart + (index * 4), SeekOrigin.Begin);
-            int start = reader.ReadNetworkInt32();
-            int end = -1;
-            if (index < tableLength - 1)
-            {
-                end = reader.ReadNetworkInt32();
-            }
-            return new PackIndexEntry(start, end < 0 ? end : (end - start), hash);
+            uint start = reader.ReadNetworkUInt32();
+            return new PackIndexEntry(start, hash);
         }
     }
 }

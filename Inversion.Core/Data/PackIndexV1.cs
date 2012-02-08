@@ -14,6 +14,11 @@ namespace Inversion.Data
 
         private Func<FileAccess, Stream> _file;
 
+        public override Version Version
+        {
+            get { return new Version(1, 0, 0, 0); }
+        }
+
         public PackIndexV1(Func<FileAccess, Stream> file)
         {
             _file = file;
@@ -41,15 +46,21 @@ namespace Inversion.Data
             }
         }
 
-        private IEnumerable<PackIndexEntry> IterateEntries(BinaryReader reader, int count)
+        public override IEnumerable<PackIndexEntry> GetEntries()
         {
-            int offset = reader.ReadNetworkInt32();
+            using (BinaryReader reader = new BinaryReader(_file(FileAccess.Read)))
+            {
+                return IterateEntries(reader, GetEntryCount(reader, FanoutStart)).ToArray();
+            }
+        }
+
+        private IEnumerable<PackIndexEntry> IterateEntries(BinaryReader reader, uint count)
+        {
             for (int i = 0; i < count; i++)
             {
+                uint offset = reader.ReadNetworkUInt32();
                 byte[] hash = reader.ReadBytes(Sha1HashSize);
-                int nextOffset = reader.ReadNetworkInt32();
-                yield return new PackIndexEntry(offset, nextOffset - offset, hash);
-                offset = nextOffset;
+                yield return new PackIndexEntry(offset, hash);
             }
         }
     }

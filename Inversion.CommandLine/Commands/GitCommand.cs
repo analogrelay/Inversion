@@ -10,6 +10,7 @@ namespace Inversion.CommandLine.Commands
     public abstract class GitCommand : Command
     {
         private Database _db;
+        private string _dbRoot;
         public virtual Database Database
         {
             get
@@ -18,14 +19,27 @@ namespace Inversion.CommandLine.Commands
             }
         }
 
-        private Database GetDatabase()
+        public virtual string DatabaseRoot
         {
-            string dbRoot = Git.FindGitDatabase(Environment.CurrentDirectory);
-            if (String.IsNullOrEmpty(dbRoot))
+            get
+            {
+                return _dbRoot ?? GetDatabaseRoot();
+            }
+        }
+
+        private string GetDatabaseRoot()
+        {
+            _dbRoot = Git.FindGitDatabase(Environment.CurrentDirectory);
+            if (String.IsNullOrEmpty(_dbRoot))
             {
                 throw new InvalidOperationException("Not in a Git working copy");
             }
-            return _db = Git.OpenGitDatabase(dbRoot);
+            return _dbRoot;
+        }
+
+        private Database GetDatabase()
+        {
+            return _db = Git.OpenGitDatabase(DatabaseRoot);
         }
     }
 }

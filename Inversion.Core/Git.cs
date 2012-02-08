@@ -37,8 +37,7 @@ namespace Inversion
                 new GitReferenceDirectory(new PhysicalFileSystem(gitDir)),
                 new GitLooseFilesDictionary(
                     new PhysicalFileSystem(Path.Combine(gitDir, "objects")),
-                    new ZlibCompressionStrategy()
-                ),
+                    new ZlibCompressionStrategy()),
                 new GitObjectCodec());
         }
     }
