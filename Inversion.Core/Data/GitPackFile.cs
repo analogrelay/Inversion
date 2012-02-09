@@ -90,14 +90,14 @@ namespace Inversion.Data
                 long deltaOffset = -1;
                 if (type == DatabaseObjectType.OffsetDelta)
                 {
-                    // ReadVarInteger doesn't do the right thing here...
+                    // This isn't _quite_ a var-integer as ReadVarInteger supports
                     byte read = rdr.ReadByte();
                     long offset = read & 0x7F;
                     while ((read & 0x80) == 0x80)
                     {
                         offset += 1;
-                        read = rdr.ReadByte();
                         offset <<= 7;
+                        read = rdr.ReadByte();
                         offset += (read & 0x7F);
                     }
                     deltaOffset = objectOffset - offset;
