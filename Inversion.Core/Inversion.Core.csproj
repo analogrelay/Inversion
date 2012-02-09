@@ -55,15 +55,7 @@
       <DependentUpon>CommonResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Data\DatabaseObjectType.cs" />
-    <Compile Include="Delta\VcdiffAddressCache.cs" />
-    <Compile Include="Delta\VcdiffCodeTable.cs" />
-    <Compile Include="Delta\VcdiffCodeTableEntry.cs" />
-    <Compile Include="Delta\VcdiffConstants.cs" />
-    <Compile Include="Delta\VcdiffCopyMode.cs" />
-    <Compile Include="Delta\VcdiffCopyModeType.cs" />
-    <Compile Include="Delta\VcdiffDecoderContext.cs" />
-    <Compile Include="Delta\VcdiffDecoderInstruction.cs" />
-    <Compile Include="Delta\VcdiffOperation.cs" />
+    <Compile Include="Delta\GitDeltaDecoder.cs" />
     <Compile Include="Utils\BinaryReaderExtensions.cs" />
     <Compile Include="Data\GitPackFileDatabase.cs" />
     <Compile Include="Data\IPackedObjectDatabase.cs" />
@@ -84,7 +76,6 @@
     <Compile Include="Data\HashGenerator.cs" />
     <Compile Include="Utils\StreamExtensions.cs" />
     <Compile Include="Delta\IDeltaDecoder.cs" />
-    <Compile Include="Delta\VcdiffDecoder.cs" />
     <Compile Include="Utils\DisposeProtectedStream.cs" />
     <Compile Include="Git.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

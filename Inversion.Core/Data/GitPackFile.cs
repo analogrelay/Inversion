@@ -34,7 +34,7 @@ namespace Inversion.Data
                 baseName + ".pack",
                 new ZlibCompressionStrategy(),
                 GitPackIndex.Open(fs, baseName + ".idx"),
-                new VcdiffDecoder());
+                new GitDeltaDecoder());
         }
 
         public virtual bool Exists(string hash)

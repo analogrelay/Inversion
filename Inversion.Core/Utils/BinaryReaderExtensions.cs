@@ -25,14 +25,14 @@ namespace Inversion.Utils
         {
             int read = self.ReadByte();
 
-            // Read the continuation byte and then remove it
+            // Remove the continuation byte and use the rest to start the value counter.
             long value = read & 0x7F /* 0111 1111 */;
 
             int shiftVal = 7 - prefixLength;
             int prefix = (int)(value >> shiftVal);
             if (prefixLength > 0)
             {
-                value = value & (((int)Math.Pow(2, prefixLength) - 1));
+                value = read & (((int)Math.Pow(2, shiftVal) - 1));
             }
             
             while ((read & 0x80 /* 1000 0000 */) == 0x80)
