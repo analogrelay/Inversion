@@ -20,6 +20,17 @@ namespace Inversion.Core.Facts.Storage
             }
         }
 
+        public static void WriteTestFile(this IFileSystem fs, string name, Action<BinaryWriter> writer)
+        {
+            using (Stream s = fs.Open(name, FileAccess.Write, create: true))
+            {
+                using (BinaryWriter bw = new BinaryWriter(s))
+                {
+                    writer(bw);
+                }
+            }
+        }
+
         public static string ReadTestFile(this IFileSystem fs, string name)
         {
             using (Stream s = fs.Open(name, FileAccess.Read, create: false))

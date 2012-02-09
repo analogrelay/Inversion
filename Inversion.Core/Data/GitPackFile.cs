@@ -36,6 +36,9 @@ namespace Inversion.Data
 
         public static GitPackFile Open(IFileSystem fs, string baseName)
         {
+            if (fs == null) { throw new ArgumentNullException("fs"); }
+            if (String.IsNullOrEmpty(baseName)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "baseName"), "baseName"); }
+
             return new GitPackFile(
                 fs,
                 baseName + ".pack",
@@ -46,6 +49,8 @@ namespace Inversion.Data
 
         public virtual bool Exists(string hash)
         {
+            if (String.IsNullOrEmpty(hash)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "hash"), "hash"); }
+
             return Index.EntryExists(BitUtils.FromHexString(hash));
         }
 

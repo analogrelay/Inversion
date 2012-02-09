@@ -62,7 +62,6 @@
     <Compile Include="Data\GitPackFile.cs" />
     <Compile Include="Data\GitPackIndex.cs" />
     <Compile Include="Data\GitPackIndexEntry.cs" />
-    <Compile Include="Data\GitPackIndexV1.cs" />
     <Compile Include="Data\GitPackIndexV2.cs" />
     <Compile Include="Utils\BitUtils.cs" />
     <Compile Include="CoreResources.Designer.cs">

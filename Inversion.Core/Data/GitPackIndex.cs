@@ -11,7 +11,7 @@ namespace Inversion.Data
 {
     public abstract class GitPackIndex
     {
-        private static readonly byte[] V2PlusSignature = new byte[] { 255, 116, 79, 99 };
+        internal static readonly byte[] V2PlusSignature = new byte[] { 255, 116, 79, 99 };
         internal const int Sha1HashSize = 20;
 
         public abstract Version Version { get; }
@@ -37,7 +37,7 @@ namespace Inversion.Data
                             throw new InvalidDataException(String.Format("Unknown Pack File version: '{0}'", ver));
                     }
                 }
-                return new GitPackIndexV1(fileOpener);
+                throw new NotSupportedException("Inversion does not support v1 Git Pack Indexes");
             }
         }
 
