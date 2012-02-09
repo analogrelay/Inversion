@@ -7,6 +7,7 @@ using System.IO;
 using Inversion.Utils;
 using System.Diagnostics;
 using Inversion.Delta;
+using System.Globalization;
 
 namespace Inversion.Data
 {
@@ -20,6 +21,12 @@ namespace Inversion.Data
 
         public GitPackFile(IFileSystem fileSystem, string filename, ICompressionStrategy compression, GitPackIndex index, IDeltaDecoder delta)
         {
+            if (fileSystem == null) { throw new ArgumentNullException("fileSystem"); }
+            if (String.IsNullOrEmpty(filename)) { throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, CommonResources.Argument_Cannot_Be_Null_Or_Empty, "filename"), "filename"); }
+            if (compression == null) { throw new ArgumentNullException("compression"); }
+            if (index == null) { throw new ArgumentNullException("index"); }
+            if (delta == null) { throw new ArgumentNullException("delta"); }
+
             FileSystem = fileSystem;
             PackFileName = filename;
             Compression = compression;
@@ -98,7 +105,7 @@ namespace Inversion.Data
                 }
                 
                 byte[] data = Compression.WrapStreamForDecompression(packFile)
-                                         .ToByteArray(size);
+                                         .ReadBytes(size);
 
                 if (deltaOffset >= 0)
                 {

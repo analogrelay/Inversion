@@ -31,7 +31,7 @@ namespace Inversion.Data
             }
 
             // Should now be at the object body, read that in (for now)
-            byte[] data = source.ToByteArray(len);
+            byte[] data = source.ReadBytes(len);
             return new DatabaseObject(DatabaseObjectTypeHelper.Parse(type), data);
         }
 

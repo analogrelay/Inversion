@@ -36,7 +36,7 @@ namespace Inversion.CommandLine.Commands
             {
                 if (Type)
                 {
-                    Console.WriteLine(obj.Type);
+                    Console.WriteLine(obj.Type.ToString().ToLowerInvariant());
                 }
                 else if (Size)
                 {
