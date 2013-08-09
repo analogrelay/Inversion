@@ -1,0 +1,3 @@
+[submodule "ext/VibrantStyles"]
+	path = ext/VibrantStyles
+	url = https://github.com/anurse/VibrantStyles
