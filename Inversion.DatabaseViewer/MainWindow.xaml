@@ -1,0 +1,8 @@
+﻿<vst:MetroWindow x:Class="Inversion.DatabaseViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vst="http://schema.vibrantcode.com/vibrantstyles"
+        Title="Git Database Viewer" Height="512" Width="595" Background="{DynamicResource MetroBackgroundBrush}" Foreground="{DynamicResource MetroForegroundBrush}" BorderBrush="{DynamicResource MetroGreenBrush}" BorderThickness="1">
+    <Grid>
+    </Grid>
+</vst:MetroWindow>

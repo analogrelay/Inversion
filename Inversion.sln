@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.20617.1 PREVIEW
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inversion.Core", "Inversion.Core\Inversion.Core.csproj", "{C89681FB-A0C1-40FF-811E-E470BC84966E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inversion.Core.Facts", "Inversion.Core.Facts\Inversion.Core.Facts.csproj", "{209368A2-60AA-46D4-9E00-8644D0968A97}"
@@ -12,6 +14,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9124E7
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inversion.CommandLine", "Inversion.CommandLine\Inversion.CommandLine.csproj", "{E767B5C8-C8A6-4A34-A8E6-24801525FB7F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database Viewer", "Database Viewer", "{7E46548E-B541-49FC-B78D-E1C9DD8048A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VibrantStyles", "ext\VibrantStyles\VibrantStyles\VibrantStyles.csproj", "{981556EA-7298-42A1-BFD3-153F8D39D0D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inversion.DatabaseViewer", "Inversion.DatabaseViewer\Inversion.DatabaseViewer.csproj", "{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,8 +61,32 @@ Global
 		{E767B5C8-C8A6-4A34-A8E6-24801525FB7F}.Release|Mixed Platforms.Build.0 = Release|x86
 		{E767B5C8-C8A6-4A34-A8E6-24801525FB7F}.Release|x86.ActiveCfg = Release|x86
 		{E767B5C8-C8A6-4A34-A8E6-24801525FB7F}.Release|x86.Build.0 = Release|x86
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5}.Release|x86.ActiveCfg = Release|Any CPU
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{981556EA-7298-42A1-BFD3-153F8D39D0D5} = {7E46548E-B541-49FC-B78D-E1C9DD8048A9}
+		{4389D2D2-564B-4E8A-A10B-6C42BFCDB794} = {7E46548E-B541-49FC-B78D-E1C9DD8048A9}
 	EndGlobalSection
 EndGlobal
